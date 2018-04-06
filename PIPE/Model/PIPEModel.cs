@@ -13,6 +13,13 @@ namespace Y86vmWpf.Model
 
 
         #region DefineData
+
+        ITools tools;
+
+        const Int64 bit_width = 64;
+        const int MAX_ICODE = 0xB;
+        const Int64 MAX_MEM = 1 << 8;
+
         Int64 cycle_cnt;
         MemArr mem;
         Int64[] reg_file;
@@ -20,7 +27,7 @@ namespace Y86vmWpf.Model
         Int64 F_predPC;
         Int64 f_stat, f_icode, f_ifun, f_valC, f_valP, f_pc, f_predPC;
         byte f_rA, f_rB;
-        bool imem_error, instr_valid;
+   
         //Decode
         Int64 D_stat, D_icode, D_ifun, D_rA, D_rB, D_valC, D_valP;
         Int64 d_stat, d_icode, d_ifun, d_valC, d_valA, d_valB, d_dstE, d_dstM, d_srcA, d_srcB;
@@ -85,6 +92,7 @@ namespace Y86vmWpf.Model
         #region Init
         public PIPEModel()
         {
+            tools = new ITools();
             Init_PIPEModel();
         }
 
@@ -117,37 +125,158 @@ namespace Y86vmWpf.Model
 
         }
         #endregion
+
+        void Fetch()
+        {
+            //Select f_pc from the source
+            if (M_icode == IJXX && !M_Cnd)
+                f_pc = M_valA;
+            else if (W_icode == IRET)
+                f_pc = W_valM;
+            else
+                f_pc = F_predPC;
+
+            //Fetch the instruction
+            byte imem = mem.Read(f_pc);
+            byte[] temp = new byte[2];
+            temp = tools.ByteSplit(imem);
+            imem_icode = temp[0];
+            imem_ifun = temp[1];
+
+            bool instr_valid, imem_error, need_regids,need_valC;
+
+            if(imem_icode <= MAX_ICODE)
+            {
+                imem_error = true;
+            }
+            else
+            {
+                imem_error = false;
+            }
+
+            if( (f_pc < MAX_MEM && f_pc >=0) )
+            {
+                instr_valid = true;
+                f_icode = imem_icode;
+                f_ifun = imem_ifun;
+            }
+            else
+            {
+                instr_valid = false;
+                f_icode = INOP;
+                f_ifun = FNONE;
+            }
+
+            if (imem_error)
+                f_stat = SADR;
+            else if (!instr_valid)
+                f_stat = SINS;
+            else if (f_icode == IHALT)
+                f_stat = SHLT;
+            else
+                f_stat = SAOK;
+
+            //Is instruction valid?
+            if (f_icode == INOP || f_icode == IHALT || f_icode == IRRMOVL || f_icode == IIRMOVL || f_icode == IRMMOVL || f_icode == IMRMOVL || f_icode == IOPL || f_icode == IJXX || f_icode == ICALL || f_icode == IRET || f_icode == IPUSHL || f_icode == IPOPL)
+                instr_valid = true;
+            else
+                instr_valid = false;
+            //Does fetched instruction require a regid byte?
+            if (f_icode == IRRMOVL || f_icode == IOPL || f_icode == IPUSHL || f_icode == IPOPL || f_icode == IIRMOVL || f_icode == IRMMOVL || f_icode == IMRMOVL)
+                need_regids = true;
+            else
+                need_regids = false;
+            //Does fetched instruction require a constant word?
+            if (f_icode == IIRMOVL || f_icode == IRMMOVL || f_icode == IMRMOVL || f_icode == IJXX || f_icode == ICALL)
+                need_valC = true;
+            else
+                need_valC = false;
+
+            if (need_regids)
+            {
+                temp = tools.ByteSplit(mem.Read(f_pc + 1));
+                f_rA = temp[0];
+                f_rB = temp[1];           
+            }
+            if (need_valC)
+            {
+                int t = 0;
+                if(need_regids)
+                {
+                    t = 1;
+                }
+                byte[] temp8 = new byte[8];
+                f_valC = 0;
+                for (int i = 0; i < 8; i++)
+                {
+                    temp[i] = mem.Read(f_pc + t + i);
+                    f_valC += temp[i];
+                    f_valC <<= 8;
+                }
+            }
+            
+            f_valP = f_pc+1;
+            if(need_regids)
+            {
+                f_valP += 1;
+            }
+            if(need_valC)
+            {
+                f_valP += 8;
+            }
+
+            //Predict next value of PC
+            if (f_icode == IJXX || f_icode == ICALL)
+                f_predPC = f_valC;
+            else
+                f_predPC = f_valP;
+
+        }
     }
+
+    
 
     #region MEM
     interface IMem
     {
-        Int64 Read(Int64 addr);
-        void Write(Int64 addr, Int64 data);
+        byte Read(Int64 addr);
+        void Write(Int64 addr, byte data);
     }
 
     class MemArr : IMem
     {
-        const Int64 MAX_MEM = 1 << 8;
-        private Int64[] arr;
+        private const Int64 MAX_MEM = 1 << 8;
+        private byte[] arr;
         
         public MemArr()
         {
-            arr = new Int64[MAX_MEM];
+            arr = new byte[MAX_MEM];
             Array.Clear(arr, 0, arr.Length);
             
         }
 
-        public Int64 Read(Int64 addr)
+        public byte Read(Int64 addr)
         {
             return arr[addr];
         }
 
-        public void Write(Int64 addr, Int64 data)
+        public void Write(Int64 addr, byte data)
         {
             arr[addr] = data;
         }
 
     }
     #endregion
+
+    public class ITools
+    {
+        public byte[] ByteSplit(Byte num)
+        {
+            byte[] res = new byte[2];
+            res[0] = (byte)((num >> 4) & (0xF));
+            res[1] = (byte)(num & 0xF);
+            return res;
+        }
+    }
+
 }
