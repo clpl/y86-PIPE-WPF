@@ -31,7 +31,7 @@ namespace Y86vmWpf.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
-            Y86 = new PIPEModel() { Icode = "hellp" };
+            Y86 = new PIPEModel() { Icode = 8 };
         }
 
         private PIPEModel y86;
@@ -52,7 +52,7 @@ namespace Y86vmWpf.ViewModel
 
         private void ExcuteValidForm()
         {
-            Y86.Icode = "success";
+            Y86.Icode = 16;
         }
 
         private bool CanExcute()
