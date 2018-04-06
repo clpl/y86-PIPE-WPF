@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PIPE.Properties
+namespace Y86vmWpf.Properties
 {
 
 

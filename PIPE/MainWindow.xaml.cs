@@ -12,8 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Y86vmWpf.ViewModel;
 
-namespace PIPE
+namespace Y86vmWpf.View
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -23,6 +24,7 @@ namespace PIPE
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
     }
 }
