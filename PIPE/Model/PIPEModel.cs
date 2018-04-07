@@ -42,6 +42,7 @@ namespace Y86vmWpf.Model
         bool dmem_error;
         //Write
         Int64 W_stat, W_icode, W_valE, W_valM, W_dstE, W_dstM;
+        Int64 w_dstE, w_valE, w_dstM, w_valM;
         Int64 Stat;
         byte imem_icode, imem_ifun;
         //Pipeline register control signals
@@ -126,6 +127,7 @@ namespace Y86vmWpf.Model
         }
         #endregion
 
+        #region Fetch
         void Fetch()
         {
             //Select f_pc from the source
@@ -232,9 +234,341 @@ namespace Y86vmWpf.Model
                 f_predPC = f_valP;
 
         }
+        #endregion
+
+        #region Decode
+        void Decode()
+        {
+            d_stat = D_stat;
+            d_icode = D_icode;
+            d_ifun = D_ifun;
+            d_valC = D_valC;
+            //select d_srcA                  
+            switch(D_icode)
+            {
+                case IRRMOVL:
+                case IRMMOVL:
+                case IOPL:
+                case IPUSHL:
+                    d_srcA = D_rA;
+                    break;
+                case IPOPL:
+                case IRET:
+                    d_srcA = RESP;
+                    break;
+                default:
+                    d_srcA = RNONE;
+                    break;
+            }
+            //select d_srcB
+            switch (D_icode)
+            {
+                case IRRMOVL:
+                case IRMMOVL:
+                case IOPL:
+                    d_srcB = D_rB;
+                    break;
+                case IPUSHL:                    
+                case IPOPL:
+                case IRET:
+                case ICALL:
+                    d_srcB = RESP;
+                    break;
+                default:
+                    d_srcB = RNONE;
+                    break;
+            }
+            //select d_srcE
+            switch (D_icode)
+            {
+                case IRRMOVL:
+                case IIRMOVL:
+                case IOPL:
+                    d_dstE = D_rB;
+                    break;
+                case IPUSHL:
+                case IPOPL:
+                case IRET:
+                case ICALL:
+                    d_dstE = RESP;
+                    break;
+                default:
+                    d_dstE = RNONE;
+                    break;
+            }
+
+            
+            if (D_icode == IMRMOVL || D_icode == IPOPL)
+                d_dstM = D_rA;
+            else
+                d_dstM = RNONE;
+                               
+                               
+                               
+            if (D_icode == ICALL || D_icode == IJXX)
+            {
+                d_valA = D_valP;
+                Forwarding_A = "NULL";
+            }
+            else if (d_srcA == e_dstE)
+            {
+                d_valA = e_valE;
+                Forwarding_A = "e_valE:0x" + e_valE.ToString("x8");
+            }
+            else if (d_srcA == M_dstM)
+            {
+                d_valA = m_valM;
+                Forwarding_A = "m_valM:0x" + m_valM.ToString("x8");
+            }
+            else if (d_srcA == M_dstE)
+            {
+                d_valA = M_valE;
+                Forwarding_A = "M_valE:0x" + M_valE.ToString("x8");
+            }
+            else if (d_srcA == W_dstM)
+            {
+                d_valA = W_valM;
+                Forwarding_A = "W_valM:0x" + W_valM.ToString("x8");
+            }
+            else if (d_srcA == W_dstE)
+            {
+                d_valA = W_valE;
+                Forwarding_A = "W_valE:0x" + W_valE.ToString("x8");
+            }
+            else
+            {
+                d_valA = reg_file[d_srcA];
+                Forwarding_A = "NULL";
+            }
+            //Fwd B module
+            if (d_srcB == e_dstE)
+            {
+                d_valB = e_valE;
+                Forwarding_B = "e_valE:0x" + e_valE.ToString("x8");
+            }
+            else if (d_srcB == M_dstM)
+            {
+                d_valB = m_valM;
+                Forwarding_B = "m_valM:0x" + m_valM.ToString("x8");
+            }
+            else if (d_srcB == M_dstE)
+            {
+                d_valB = M_valE;
+                Forwarding_B = "M_valE:0x" + M_valE.ToString("x8");
+            }
+            else if (d_srcB == W_dstM)
+            {
+                d_valB = W_valM;
+                Forwarding_B = "W_valM:0x" + W_valM.ToString("x8");
+            }
+            else if (d_srcB == W_dstE)
+            {
+                d_valB = W_valE;
+                Forwarding_B = "W_valE:0x" + W_valE.ToString("x8");
+            }
+            else
+            {
+                d_valB = reg_file[d_srcB];
+                Forwarding_B = "NULL";
+            }
+        }
+        #endregion
+
+        #region Execute
+        void Execute()
+        {
+            e_stat = E_stat;
+            e_icode = E_icode;
+
+            //Select aluA
+            switch (E_icode)
+            {
+                case IRRMOVL:
+                case IOPL:
+                    aluA = E_valA;
+                    break;
+                case IIRMOVL:
+                case IRMMOVL:
+                case IMRMOVL:
+                    aluA = E_valC;
+                    break;
+                case ICALL:
+                case IPUSHL:
+                    aluA = -4;
+                    break;
+                default:
+                    aluA = 0;
+                    break;
+            }
+            //Select aluB
+            switch (E_icode)
+            {
+                case IRMMOVL:
+                case IMRMOVL:
+                case IOPL:
+                case ICALL:
+                case IPUSHL:                   
+                case IRET:
+                case IPOPL:
+                    aluB = E_valB;
+                    break;
+                default:
+                    aluB = 0;
+                    break;
+            }
+            
+            if (E_icode == IOPL)
+                alufun = E_ifun;
+            else
+                alufun = ALUADD;
+            //ALU module
+            switch (alufun)
+            {
+                case 0: e_valE = aluB + aluA; break;
+                case 1: e_valE = aluB - aluA; break;
+                case 2: e_valE = aluB & aluA; break;
+                case 3: e_valE = aluB ^ aluA; break;
+                default: e_valE = 0; break;
+            }
+            //Should the condition codes be updated?
+            //State changes only during normal operation
+            if (E_icode == IOPL && m_stat != SADR && m_stat != SINS && m_stat != SHLT && W_stat != SADR && W_stat != SINS && W_stat != SHLT)
+                set_cc = true;
+            else
+                set_cc = false;
+            //Generate valA in execute stage
+            e_valA = E_valA;
+            //Set dstE to RNONE in event of not-taken conditional move
+            if (E_icode == IRRMOVL && !e_Cnd)
+                e_dstE = RNONE;
+            else
+                e_dstE = E_dstE;
+            //cc
+            if (set_cc)
+            {
+                if (e_valE < 0)
+                    SF = true;
+                else
+                    SF = false;
+                if (e_valE == 0)
+                    ZF = true;
+                else
+                    ZF = false;
+                if ((aluA < 0 == aluB < 0) && (aluA < 0 != e_valE < 0))
+                    OF = true;
+                else
+                    OF = false;
+            }
+            //e_Cnd module            
+            if (E_icode == IJXX || E_icode == IRRMOVL)
+            {
+                switch (E_ifun)
+                {
+                    case 0: e_Cnd = true; break;//jmp or rrmovl
+                    case 1: if (ZF || SF) e_Cnd = true; else e_Cnd = false; break;//jle or cmovle
+                    case 2: if (SF) e_Cnd = true; else e_Cnd = false; break;//jl or cmovl
+                    case 3: if (ZF) e_Cnd = true; else e_Cnd = false; break;//je or comve
+                    case 4: if (!ZF) e_Cnd = true; else e_Cnd = false; break;//jne or cmovne
+                    case 5: if (!SF) e_Cnd = true; else e_Cnd = false; break;//jge or comvge
+                    case 6: if (!ZF && !SF) e_Cnd = true; else e_Cnd = false; break;//jg or comvg
+                }
+            }
+            else
+                e_Cnd = false;
+            e_dstM = E_dstM;
+        }
+        #endregion
+
+        #region Memory
+        void Memory()
+        {
+            m_icode = M_icode;
+            m_valE = M_valE;
+            m_dstE = M_dstE;
+            m_dstM = M_dstM;
+            //Select memory address
+            switch (M_icode)
+            {
+                case IRMMOVL:
+                case IPUSHL:
+                case ICALL:
+                case IMRMOVL:
+                    mem_addr = M_valE;
+                    break;
+                case IPOPL:
+                case IRET:
+                    mem_addr = M_valA;
+                    break;             
+                default:                
+                    break;
+            }
+           
+                                  //Set read control signal
+            if (M_icode == IMRMOVL || M_icode == IPOPL || M_icode == IRET)
+                mem_read = true;
+            else
+                mem_read = false;
+            //Set write control signal
+            if (M_icode == IRMMOVL || M_icode == IPUSHL || M_icode == ICALL)
+                mem_write = true;
+            else
+                mem_write = false;
+            //read / write memory
+            if (mem_addr > MAX_MEM)
+                dmem_error = true;
+            else
+            {
+                dmem_error = false;
+                if (mem_read)
+                {
+                    m_valM = 0;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        m_valM <<= 8;
+                        m_valM += mem.Read(mem_addr + i);                       
+                    }
+                }
+                else
+                    m_valM = 0;
+                if (mem_write)
+                {
+                    for (int i = 0; i < 4; i++)                       
+                        mem.Write(mem_addr, (byte)((M_valA >> (8 * i)) & 0xff));
+                }
+            }
+            //Update the status
+            m_stat = dmem_error ? SADR : M_stat;
+        }
+        #endregion
+
+        #region Write back
+        void Write_back()
+        {
+            //Set E port register ID
+            w_dstE = W_dstE;
+            //## Set E port value
+            w_valE = W_valE;
+            //Set M port register ID
+            w_dstM = W_dstM;
+            //Set M port value
+            w_valM = W_valM;
+            //Update processor status
+            if (W_stat == SBUB)
+                Stat = SAOK;
+            else
+                Stat = W_stat;
+            if (Stat == SAOK)//only if stat is AOK can we update register file
+            {
+                if (W_dstE != RNONE)
+                    reg_file[W_dstE] = W_valE;
+                if (W_dstM != RNONE)
+                    reg_file[W_dstM] = W_valM;
+            }
+        }
+        #endregion
     }
 
-    
+
 
     #region MEM
     interface IMem
