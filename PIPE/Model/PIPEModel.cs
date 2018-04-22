@@ -51,7 +51,7 @@ namespace Y86vmWpf.Model
         bool ZF, SF, OF;                        //condition code
         Int64 aluA, aluB;
         Int64 alufun;
-        bool set_cc;
+        bool set_cc, imem_error, instr_valid;
         Int64 mem_addr;
         bool mem_read, mem_write;
         public string writeDirectory;   //directory for writing the record documents
@@ -87,7 +87,7 @@ namespace Y86vmWpf.Model
         const byte RESI = 6;//%esi
         const byte REDI = 7;//%edi
         const Int64 RNONE = 0xF;//no register
-
+        const Int64 RNOP = 0;//value when register in bubble
         #endregion
 
         #region Init
@@ -566,6 +566,140 @@ namespace Y86vmWpf.Model
             }
         }
         #endregion
+
+        #region GeneratedControlSignal
+        void GeneratedStateControlSignal()
+        {
+            F_bubble = false;
+            if ((E_icode == IMRMOVL || E_icode == IPOPL) && (E_dstM == d_srcA || E_dstM == d_srcB) || (IRET == D_icode || IRET == E_icode || IRET == M_icode))
+                F_stall = true;
+            else
+                F_stall = false;
+
+            if ((E_icode == IMRMOVL || E_icode == IPOPL) && (E_dstM == d_srcA || E_dstM == d_srcB))
+                D_stall = true;
+            else
+                D_stall = false;
+
+            if ((E_icode == IJXX && !e_Cnd) || !((E_icode == IMRMOVL || E_icode == IPOPL) && (E_dstM == d_srcA || E_dstM == d_srcB)) && (IRET == D_icode || IRET == E_icode || IRET == M_icode))
+                D_bubble = true;
+            else
+                D_bubble = false;
+
+            E_stall = false;
+            if ((E_icode == IJXX && !e_Cnd) || (E_icode == IMRMOVL || E_icode == IPOPL) && (E_dstM == d_srcA || E_dstM == d_srcB))
+                E_bubble = true;
+            else
+                E_bubble = false;
+
+            M_stall = false;
+            if (m_stat == SADR || m_stat == SINS || m_stat == SHLT || W_stat == SADR || W_stat == SINS || W_stat == SHLT)
+                M_bubble = true;
+            else
+                M_bubble = false;
+
+            W_bubble = false;
+            if (W_stat == SADR || W_stat == SINS || W_stat == SHLT)
+                W_stall = true;
+            else
+                W_stall = false;
+            
+        }
+        #endregion
+
+        #region GeneratedNextPipeStateByControlSignal
+        void GeneratedNextPipeStateByControlSignal()
+        {
+            if(F_stall)
+            {
+                F_predPC = f_predPC;
+            }
+            
+            if(!D_stall)
+            {
+                D_stat = f_stat;
+                D_icode = f_icode;
+                D_ifun = f_ifun;
+                D_rA = f_rA;
+                D_rB = f_rB;
+                D_valC = f_valC;
+                D_valP = f_valP;
+            }
+            if(D_bubble)
+            {
+                D_stat = SBUB;
+                D_icode = INOP;
+                D_ifun = FNONE;
+                D_rA = RNONE;
+                D_rB = RNONE;
+                D_valC = 0;
+                D_valP = 0;
+            }
+
+            if (E_bubble)
+            {
+                E_stat = SBUB;
+                E_icode = INOP;
+                E_ifun = FNONE;
+                E_valC = E_valA = E_valB = RNOP;
+                E_dstE = E_dstM = E_srcA = E_srcB = RNONE;
+            }
+            else
+            {
+                E_stat = d_stat;
+                E_icode = d_icode;
+                E_ifun = d_ifun;
+                E_valC = d_valC;
+                E_valA = d_valA;
+                E_valB = d_valB;
+                E_dstE = d_dstE;
+                E_dstM = d_dstM;
+                E_srcA = d_srcA;
+                E_srcB = d_srcB;
+            }
+
+            if (M_bubble)
+            {
+                M_stat = SBUB;
+                M_icode = INOP;
+                M_Cnd = false;
+                M_valE = M_valA = RNOP;
+                M_dstE = M_dstM = RNONE;
+            }
+            else
+            {
+                M_stat = e_stat;
+                M_icode = e_icode;
+                M_Cnd = e_Cnd;
+                M_valE = e_valE;
+                M_valA = e_valA;
+                M_dstE = e_dstE;
+                M_dstM = e_dstM;
+            }
+
+            if (!W_stall)
+            {
+                W_stat = m_stat;
+                W_icode = m_icode;
+                W_valE = m_valE;
+                W_valM = m_valM;
+                W_dstE = m_dstE;
+                W_dstM = m_dstM;
+            }
+        }
+        #endregion
+
+        #region GenerateNormalState
+        void GenerateNormalState()
+        {
+            Fetch();
+            Decode();
+            Execute();
+            Memory();
+            Write_back();
+        }
+        #endregion
+
     }
 
 
@@ -577,16 +711,28 @@ namespace Y86vmWpf.Model
         void Write(Int64 addr, byte data);
     }
 
+    class CacheClass
+    {
+        
+    }
+
+    //memory
     class MemArr : IMem
     {
         private const Int64 MAX_MEM = 1 << 8;
         private byte[] arr;
-        
+
+        private const Int64 MAX_CACHE = 1 << 4;
+        private byte[] cache;
+
         public MemArr()
         {
+            //init
             arr = new byte[MAX_MEM];
+            cache = new byte[MAX_CACHE];
+           
             Array.Clear(arr, 0, arr.Length);
-            
+            Array.Clear(cache, 0, cache.Length);
         }
 
         public byte Read(Int64 addr)
@@ -597,6 +743,11 @@ namespace Y86vmWpf.Model
         public void Write(Int64 addr, byte data)
         {
             arr[addr] = data;
+        }
+
+        private void MemToCache(Int64 addr)
+        {
+
         }
 
     }
