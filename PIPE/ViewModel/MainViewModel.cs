@@ -1,5 +1,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using System.Threading.Tasks;
+using System.Threading;
 using Y86vmWpf.Model;
 
 namespace Y86vmWpf.ViewModel
@@ -31,7 +33,10 @@ namespace Y86vmWpf.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
-            Y86 = new PIPEModel() { Icode = 8 };
+            Y86 = new PIPEModel();
+            Y86.InitAll();
+            //Y86.Run();
+            
         }
 
         private PIPEModel y86;
@@ -52,12 +57,39 @@ namespace Y86vmWpf.ViewModel
 
         private void ExcuteValidForm()
         {
-            Y86.Icode = 16;
+            //Y86.Icode = 16;
+            RunRunRun();
         }
 
         private bool CanExcute()
         {
             return true;
+        }
+
+        public void RunAStep()
+        {
+            Y86.Run();
+        }
+
+        public void RunRunRun()
+        {
+            Y86.Icode = "sss";
+            Task.Factory.StartNew(() =>
+            {
+                int i = 0;
+                while (true)
+                {
+                    if (i == Y86.RunSpeed)
+                    {
+                        RunAStep();
+                        Y86.ConvertViewModel();
+                        i = 0;
+                    }
+                    i++;
+                    Thread.Sleep(10);
+                }
+                
+            });
         }
     }
 }

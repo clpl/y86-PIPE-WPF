@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using GalaSoft.MvvmLight;
-
+using System.IO;
 
 namespace Y86vmWpf.Model
 {
@@ -12,8 +13,14 @@ namespace Y86vmWpf.Model
     {
 
 
+        #region DefineControlParameter
+        bool isRun = false;
+        long runSpeed = 200;
+        #endregion
+
         #region DefineData
 
+        const String filepath = "bcode.bin";
         ITools tools;
 
         const Int64 bit_width = 64;
@@ -88,13 +95,22 @@ namespace Y86vmWpf.Model
         const byte REDI = 7;//%edi
         const Int64 RNONE = 0xF;//no register
         const Int64 RNOP = 0;//value when register in bubble
+
+        public long RunSpeed { get => runSpeed; set => runSpeed = value; }
+        public bool IsRun { get => isRun; set => isRun = value; }
         #endregion
 
         #region Init
         public PIPEModel()
         {
+            
+        }
+
+        public void InitAll()
+        {
             tools = new ITools();
             Init_PIPEModel();
+            ReadFromFile();
         }
 
         void Init_PIPEModel()
@@ -124,6 +140,19 @@ namespace Y86vmWpf.Model
             reg_file = new Int64[9];
             Array.Clear(reg_file, 0, reg_file.Length);
 
+        }
+
+        void ReadFromFile()
+        {
+            FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            long len = (long)fs.Length;
+            for (long i = 0; i < len; i++)
+            {
+                mem.Write(i, br.ReadByte());
+            }
+            fs.Close();
+            br.Close();
         }
         #endregion
 
@@ -700,6 +729,50 @@ namespace Y86vmWpf.Model
         }
         #endregion
 
+        public void Run()
+        {
+            cycle_cnt++;
+            Console.WriteLine(cycle_cnt);
+            GenerateNormalState();
+            GeneratedStateControlSignal();
+            GeneratedNextPipeStateByControlSignal();
+            ConvertViewModel();
+        }
+
+        public string vD_icode = "0";
+        public string vE_icode = "0";
+        public string vM_icode = "0";
+        public string vW_icode = "0";
+
+        public void ConvertViewModel()
+        {
+            vD_icode = D_icode.ToString();
+            vE_icode = E_icode.ToString();
+            //Console.WriteLine(D_icode);
+            vM_icode = M_icode.ToString();
+            vW_icode = W_icode.ToString();
+
+        }
+
+        public string VD_icode { get => vD_icode; set { vD_icode = value; RaisePropertyChanged(() => VD_icode); } }
+        public string VE_icode { get => vE_icode; set { vE_icode = value; RaisePropertyChanged(() => VE_icode); } }
+        public string VM_icode { get => vM_icode; set { vM_icode = value; RaisePropertyChanged(() => VM_icode); } }
+        public string VW_icode { get => vW_icode; set { vW_icode = value; RaisePropertyChanged(() => VW_icode); } }
+
+        public string Icode
+        {
+            get => icode; set
+            {
+                icode = value;
+                RaisePropertyChanged(() => Icode);
+            }
+        }
+
+        string icode = "i";
+
+       
+
+
     }
 
 
@@ -733,6 +806,15 @@ namespace Y86vmWpf.Model
            
             Array.Clear(arr, 0, arr.Length);
             Array.Clear(cache, 0, cache.Length);
+        }
+
+        public void SetMem(byte[] init_array)
+        {
+            Int64 len = init_array.Length;
+            for(Int64 i = 0;i < len; i++)
+            {
+                Write(i, init_array[i]);
+            }
         }
 
         public byte Read(Int64 addr)

@@ -4,10 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="720.157" Width="1050.581">
     <Grid>
+        <Grid Margin="0,0,528,-0.2">
+            <Grid.Background>
+                <ImageBrush ImageSource=".\images\pipe.jpg"/>
+            </Grid.Background>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="94,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="95,349,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="95,193,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="95,58,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+        </Grid>
+        <!--
         <TextBox Text="{Binding Y86.Icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderBrush="Black" Margin="286,0,371.6,355"/>
         <TextBox Text="{Binding Y86.Icode}" Margin="286,147,371.6,212" />
-        <Button Content="change" Command="{Binding Changebb}" Margin="490,84,185.6,287" />
+        -->
+        <Button Content="change" Command="{Binding Changebb}" Margin="561,49,115,581.4" />
+
+        <TextBox Text="458" Margin="561,333,96,209.4" />
+        
     </Grid>
 </Window>
