@@ -3,6 +3,8 @@ using GalaSoft.MvvmLight.CommandWpf;
 using System.Threading.Tasks;
 using System.Threading;
 using Y86vmWpf.Model;
+using PIPE.Model;
+using System;
 
 namespace Y86vmWpf.ViewModel
 {
@@ -37,6 +39,7 @@ namespace Y86vmWpf.ViewModel
             ////}
             Y86 = new PIPEModel();
             Y86.InitAll();
+            //Y86.RunSpeed = 50;
             //Y86.Run();
 
         }
@@ -63,6 +66,40 @@ namespace Y86vmWpf.ViewModel
             RunRunRun();
         }
 
+        private RelayCommand pause;
+
+        public RelayCommand Pause
+        {
+            get
+            {
+                if (pause == null) return new RelayCommand(() => PauseExcuteValidForm(), CanExcute);
+                return Pause;
+            }
+            set { pause = value; }
+        }
+
+        private void PauseExcuteValidForm()
+        {
+            running = false;
+        }
+
+        private RelayCommand astep;
+
+        public RelayCommand Astep
+        {
+            get
+            {
+                if (astep == null) return new RelayCommand(() => AstepExcuteValidForm(), CanExcute);
+                return astep;
+            }
+            set { astep = value; }
+        }
+
+        private void AstepExcuteValidForm()
+        {
+            RunAStep();
+        }
+
         private bool CanExcute()
         {
             return true;
@@ -73,11 +110,18 @@ namespace Y86vmWpf.ViewModel
             Y86.Run();
         }
 
+        private bool running = true; 
+
         public void RunRunRun()
         {
             //Y86.test();
+            Assembler asm = new Assembler();
+            string s = asm.assemble("jne target");
+            Console.WriteLine(s);
+            /*
             Task.Factory.StartNew(() =>
             {
+                running = true;
                 int i = 0;
                 while (true)
                 {
@@ -88,10 +132,14 @@ namespace Y86vmWpf.ViewModel
                         i = 0;
                     }
                     i++;
+                    
+                    if (!running)
+                        break;
                     Thread.Sleep(10);
                 }
                 
             });
+            */
         }
     }
 }

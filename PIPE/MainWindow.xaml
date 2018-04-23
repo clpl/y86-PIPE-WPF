@@ -32,7 +32,7 @@
             <TextBox HorizontalAlignment="Left" Height="23" Margin="380,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_dstM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
             <TextBox HorizontalAlignment="Left" Height="23" Margin="413,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_srcA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
             <TextBox HorizontalAlignment="Left" Height="23" Margin="441,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_srcB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="151,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_Cnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="145,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_Cnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="45"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="209,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_valE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="57"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="266,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_valA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="57"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="352,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_dstE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
@@ -46,9 +46,45 @@
         <TextBox Text="{Binding Y86.Icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderBrush="Black" Margin="286,0,371.6,355"/>
         <TextBox Text="{Binding Y86.Icode}" Margin="286,147,371.6,212" />
         -->
-        <Button Content="change" Command="{Binding Changebb}" Margin="561,49,115,581.4" />
+        <Grid>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="567,108,0,0" TextWrapping="Wrap" Text="{Binding Y86.Veax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="567,135,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vecx, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="567,162,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vedx, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="567,189,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vebx, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="567,216,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vesp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="567,243,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vebp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="567,270,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vesi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="567,297,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vedi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <Label Content="eax" HorizontalAlignment="Left" Margin="521,297,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="ecx" HorizontalAlignment="Left" Margin="521,270,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="edx" HorizontalAlignment="Left" Margin="521,243,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="ebx" HorizontalAlignment="Left" Margin="521,216,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="esp" HorizontalAlignment="Left" Margin="521,189,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="ebp" HorizontalAlignment="Left" Margin="521,162,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="esi" HorizontalAlignment="Left" Margin="521,135,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="edi" HorizontalAlignment="Left" Margin="521,108,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            
 
-        <TextBox Text="458" Margin="561,333,96,209.4" />
+        </Grid>
+        <TextBox FontSize="50px" BorderBrush="Transparent" HorizontalAlignment="Left" Height="61" Margin="567,29,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vcycle_cnt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="83"/>
+        <Label FontSize="15px" Content="Cycle:" HorizontalAlignment="Left" Margin="508,27,0,0" VerticalAlignment="Top" Height="29" Width="54"/>
+        <Button Content="start" Command="{Binding Changebb}" Margin="858,23,115,639.4" />
 
+
+        <Button Content="stop" Command="{Binding Pause}" Margin="858,56,115,606.4" />
+        <Button Content="step" Command="{Binding Astep}" Margin="858,89,115,573.4" />
+        <!--<TextBox HorizontalAlignment="Left" Height="25" Margin="859,133,-415,0" TextWrapping="Wrap" Text="{Binding Y86.VrunSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="72"/>
+        -->
     </Grid>
 </Window>
+<!--
+eax
+ecx
+edx
+ebx
+esp
+ebp
+esi
+edi
+
+    -->
