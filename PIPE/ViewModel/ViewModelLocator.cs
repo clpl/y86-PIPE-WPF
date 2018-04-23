@@ -43,6 +43,7 @@ namespace Y86vmWpf.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+            //SimpleIoc.Default.Register<MainViewModel>();
         }
 
         public MainViewModel Main

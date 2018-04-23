@@ -4,16 +4,43 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        DataContext="{Binding Source={StaticResource Locator},Path=Main}"
         Title="MainWindow" Height="720.157" Width="1050.581">
     <Grid>
         <Grid Margin="0,0,528,-0.2">
             <Grid.Background>
                 <ImageBrush ImageSource=".\images\pipe.jpg"/>
             </Grid.Background>
-            <TextBox HorizontalAlignment="Left" Height="20" Margin="94,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
-            <TextBox HorizontalAlignment="Left" Height="23" Margin="95,349,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="95,193,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
-            <TextBox HorizontalAlignment="Left" Height="23" Margin="95,58,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="95,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="95,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="95,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="95,54,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="123,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_ifun,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="151,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_rA,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="179,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_rB,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="207,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_valC,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="59"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="294,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_valP,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" VerticalAlignment="Top" Width="59"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="67,480,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_stat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="67,346,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_stat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="67,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_stat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="67,57,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_stat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="123,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_ifun, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="179,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_valC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="237,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_valA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="294,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_valB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="352,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_dstE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="380,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_dstM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="413,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_srcA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="441,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_srcB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="151,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_Cnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="209,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_valE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="57"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="266,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_valA, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="57"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="352,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_dstE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="209,55,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_valE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="57"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="266,55,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_valM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="57"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="352,57,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_dstE, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="380,57,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_dstM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="380,188,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_dstM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="28"/>
         </Grid>
         <!--
         <TextBox Text="{Binding Y86.Icode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" BorderBrush="Black" Margin="286,0,371.6,355"/>
@@ -22,6 +49,6 @@
         <Button Content="change" Command="{Binding Changebb}" Margin="561,49,115,581.4" />
 
         <TextBox Text="458" Margin="561,333,96,209.4" />
-        
+
     </Grid>
 </Window>

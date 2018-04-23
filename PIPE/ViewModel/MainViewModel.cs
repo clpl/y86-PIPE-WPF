@@ -23,6 +23,8 @@ namespace Y86vmWpf.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
+        /// 
+
         public MainViewModel()
         {
             ////if (IsInDesignMode)
@@ -36,12 +38,12 @@ namespace Y86vmWpf.ViewModel
             Y86 = new PIPEModel();
             Y86.InitAll();
             //Y86.Run();
-            
+
         }
 
         private PIPEModel y86;
 
-        public PIPEModel Y86 { get => y86; set => y86 = value; }
+        public PIPEModel Y86 { get => y86; set { y86 = value; RaisePropertyChanged(() => Y86);} }
 
         private RelayCommand changebb;
 
@@ -73,7 +75,7 @@ namespace Y86vmWpf.ViewModel
 
         public void RunRunRun()
         {
-            Y86.Icode = "sss";
+            //Y86.test();
             Task.Factory.StartNew(() =>
             {
                 int i = 0;

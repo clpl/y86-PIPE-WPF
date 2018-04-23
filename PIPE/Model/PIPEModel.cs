@@ -176,7 +176,7 @@ namespace Y86vmWpf.Model
 
             bool instr_valid, imem_error, need_regids,need_valC;
 
-            if(imem_icode <= MAX_ICODE)
+            if(imem_icode >= MAX_ICODE)
             {
                 imem_error = true;
             }
@@ -222,39 +222,31 @@ namespace Y86vmWpf.Model
                 need_valC = true;
             else
                 need_valC = false;
+            f_pc += 1;
 
             if (need_regids)
             {
                 temp = tools.ByteSplit(mem.Read(f_pc + 1));
                 f_rA = temp[0];
-                f_rB = temp[1];           
+                f_rB = temp[1];
+                f_pc += 1;
             }
             if (need_valC)
             {
-                int t = 0;
-                if(need_regids)
-                {
-                    t = 1;
-                }
                 byte[] temp8 = new byte[8];
                 f_valC = 0;
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    temp[i] = mem.Read(f_pc + t + i);
-                    f_valC += temp[i];
+                    temp8[i] = mem.Read(f_pc + i);
+                    Console.WriteLine(f_pc + i);
+                    Console.WriteLine(temp8[i].ToString("x16"));
                     f_valC <<= 8;
+                    f_valC += temp8[i];    
                 }
+                f_pc += 4;
             }
-            
-            f_valP = f_pc+1;
-            if(need_regids)
-            {
-                f_valP += 1;
-            }
-            if(need_valC)
-            {
-                f_valP += 8;
-            }
+
+            f_valP = f_pc;
 
             //Predict next value of PC
             if (f_icode == IJXX || f_icode == ICALL)
@@ -639,7 +631,7 @@ namespace Y86vmWpf.Model
         #region GeneratedNextPipeStateByControlSignal
         void GeneratedNextPipeStateByControlSignal()
         {
-            if(F_stall)
+            if(!F_stall)
             {
                 F_predPC = f_predPC;
             }
@@ -732,6 +724,7 @@ namespace Y86vmWpf.Model
         public void Run()
         {
             cycle_cnt++;
+            ConvertData();
             Console.WriteLine(cycle_cnt);
             GenerateNormalState();
             GeneratedStateControlSignal();
@@ -739,25 +732,122 @@ namespace Y86vmWpf.Model
             ConvertViewModel();
         }
 
-        public string vD_icode = "0";
-        public string vE_icode = "0";
-        public string vM_icode = "0";
-        public string vW_icode = "0";
+        #region display
+        public string vD_icode;
+        public string vM_icode;
+        public string vW_icode;
+        public string vE_icode;
+        public string vD_stat;
+        public string vD_ifun;
+        public string vD_rA;
+        public string vD_rB;
+        public string vD_valC;
+        public string vD_valP;
+        public string vE_stat;
+        public string vE_ifun;
+        public string vE_valC;
+        public string vE_valA;
+        public string vE_valB;
+        public string vE_dstE;
+        public string vE_dstM;
+        public string vE_srcA;
+        public string vE_srcB;
+        public string vM_stat;
+        public string vM_Cnd;
+        public string vM_valE;
+        public string vM_valA;
+        public string vM_dstE;
+        public string vM_dstM;
+        public string vW_stat;
+        public string vW_valE;
+        public string vW_valM;
+        public string vW_dstE;
+        public string vW_dstM;
+
 
         public void ConvertViewModel()
         {
-            vD_icode = D_icode.ToString();
-            vE_icode = E_icode.ToString();
+            VD_icode = D_icode.ToString();
+            VE_icode = E_icode.ToString();
             //Console.WriteLine(D_icode);
-            vM_icode = M_icode.ToString();
-            vW_icode = W_icode.ToString();
+            VM_icode = M_icode.ToString();
+            VW_icode = W_icode.ToString();
+            VD_stat = D_stat.ToString();
+            VD_ifun = D_ifun.ToString();
+            VD_rA = D_rA.ToString();
+            VD_rB = D_rB.ToString();
+            VD_valC = D_valC.ToString();
+            VD_valP = D_valP.ToString();
+            VE_stat = E_stat.ToString();
+            VE_ifun = E_ifun.ToString();
+            VE_valC = E_valC.ToString();
+            VE_valA = E_valA.ToString();
+            VE_valB = E_valB.ToString();
+            VE_dstE = E_dstE.ToString();
+            VE_dstM = E_dstM.ToString();
+            VE_srcA = E_srcA.ToString();
+            VE_srcB = E_srcB.ToString();
+            VM_stat = M_stat.ToString();
+            VM_Cnd = M_Cnd.ToString();
+            VM_valE = M_valE.ToString();
+            VM_valA = M_valA.ToString();
+            VM_dstE = M_dstE.ToString();
+            VM_dstM = M_dstM.ToString();
+            VW_stat = W_stat.ToString();
+            VW_valE = W_valE.ToString();
+            VW_valM = W_valM.ToString();
+            VW_dstE = W_dstE.ToString();
+            VW_dstM = W_dstM.ToString();
+
 
         }
+
+        public void ConvertData()
+        {
+            D_icode = Convert.ToInt64(VD_icode);
+            E_icode = Convert.ToInt64(VE_icode);
+            M_icode = Convert.ToInt64(VM_icode);
+            W_icode = Convert.ToInt64(VW_icode);
+
+        }
+
 
         public string VD_icode { get => vD_icode; set { vD_icode = value; RaisePropertyChanged(() => VD_icode); } }
         public string VE_icode { get => vE_icode; set { vE_icode = value; RaisePropertyChanged(() => VE_icode); } }
         public string VM_icode { get => vM_icode; set { vM_icode = value; RaisePropertyChanged(() => VM_icode); } }
         public string VW_icode { get => vW_icode; set { vW_icode = value; RaisePropertyChanged(() => VW_icode); } }
+        public string VD_stat { get => vD_stat; set { vD_stat = value; RaisePropertyChanged(() => VD_stat); } }
+        public string VD_ifun { get => vD_ifun; set { vD_ifun = value; RaisePropertyChanged(() => VD_ifun); } }
+        public string VD_rA { get => vD_rA; set { vD_rA = value; RaisePropertyChanged(() => VD_rA); } }
+        public string VD_rB { get => vD_rB; set { vD_rB = value; RaisePropertyChanged(() => VD_rB); } }
+        public string VD_valC { get => vD_valC; set { vD_valC = value; RaisePropertyChanged(() => VD_valC); } }
+        public string VD_valP { get => vD_valP; set { vD_valP = value; RaisePropertyChanged(() => VD_valP); } }
+        public string VE_stat { get => vE_stat; set { vE_stat = value; RaisePropertyChanged(() => VE_stat); } }
+        public string VE_ifun { get => vE_ifun; set { vE_ifun = value; RaisePropertyChanged(() => VE_ifun); } }
+        public string VE_valC { get => vE_valC; set { vE_valC = value; RaisePropertyChanged(() => VE_valC); } }
+        public string VE_valA { get => vE_valA; set { vE_valA = value; RaisePropertyChanged(() => VE_valA); } }
+        public string VE_valB { get => vE_valB; set { vE_valB = value; RaisePropertyChanged(() => VE_valB); } }
+        public string VE_dstE { get => vE_dstE; set { vE_dstE = value; RaisePropertyChanged(() => VE_dstE); } }
+        public string VE_dstM { get => vE_dstM; set { vE_dstM = value; RaisePropertyChanged(() => VE_dstM); } }
+        public string VE_srcA { get => vE_srcA; set { vE_srcA = value; RaisePropertyChanged(() => VE_srcA); } }
+        public string VE_srcB { get => vE_srcB; set { vE_srcB = value; RaisePropertyChanged(() => VE_srcB); } }
+        public string VM_stat { get => vM_stat; set { vM_stat = value; RaisePropertyChanged(() => VM_stat); } }
+        public string VM_Cnd { get => vM_Cnd; set { vM_Cnd = value; RaisePropertyChanged(() => VM_Cnd); } }
+        public string VM_valE { get => vM_valE; set { vM_valE = value; RaisePropertyChanged(() => VM_valE); } }
+        public string VM_valA { get => vM_valA; set { vM_valA = value; RaisePropertyChanged(() => VM_valA); } }
+        public string VM_dstE { get => vM_dstE; set { vM_dstE = value; RaisePropertyChanged(() => VM_dstE); } }
+        public string VM_dstM { get => vM_dstM; set { vM_dstM = value; RaisePropertyChanged(() => VM_dstM); } }
+        public string VW_stat { get => vW_stat; set { vW_stat = value; RaisePropertyChanged(() => VW_stat); } }
+        public string VW_valE { get => vW_valE; set { vW_valE = value; RaisePropertyChanged(() => VW_valE); } }
+        public string VW_valM { get => vW_valM; set { vW_valM = value; RaisePropertyChanged(() => VW_valM); } }
+        public string VW_dstE { get => vW_dstE; set { vW_dstE = value; RaisePropertyChanged(() => VW_dstE); } }
+        public string VW_dstM { get => vW_dstM; set { vW_dstM = value; RaisePropertyChanged(() => VW_dstM); } }
+
+
+        public void test()
+        {
+            icode = "5487";
+        }
 
         public string Icode
         {
@@ -769,10 +859,7 @@ namespace Y86vmWpf.Model
         }
 
         string icode = "i";
-
-       
-
-
+        #endregion
     }
 
 
