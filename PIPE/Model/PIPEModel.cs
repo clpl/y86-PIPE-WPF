@@ -19,7 +19,7 @@ namespace Y86vmWpf.Model
         #endregion
 
         #region DefineData
-
+        string code;
         const String filepath = "bcode.bin";
         ITools tools;
 
@@ -725,7 +725,6 @@ namespace Y86vmWpf.Model
         {
             cycle_cnt++;
             ConvertData();
-            Console.WriteLine(cycle_cnt);
             GenerateNormalState();
             GeneratedStateControlSignal();
             GeneratedNextPipeStateByControlSignal();
@@ -862,6 +861,15 @@ namespace Y86vmWpf.Model
             W_dstE = Convert.ToInt64(VW_dstE);
             W_dstM = Convert.ToInt64(VW_dstM);
             */
+
+            reg_file[0] = Convert.ToInt64(Veax);
+            reg_file[0] = Convert.ToInt64(vecx);
+            reg_file[0] = Convert.ToInt64(Vedx);
+            reg_file[0] = Convert.ToInt64(Vebx);
+            reg_file[0] = Convert.ToInt64(Vesp);
+            reg_file[0] = Convert.ToInt64(Vebp);
+            reg_file[0] = Convert.ToInt64(Vesi);
+            reg_file[0] = Convert.ToInt64(Vedi);
 
         }
 

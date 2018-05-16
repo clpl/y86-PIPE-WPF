@@ -116,10 +116,10 @@ namespace Y86vmWpf.ViewModel
         {
             //Y86.test();
             Assembler asm = new Assembler();
-            string s = asm.assemble("jne target");
+            string s = asm.assemble("jne 487");
             Console.WriteLine(s);
-            /*
-            Task.Factory.StartNew(() =>
+            
+            /*Task.Factory.StartNew(() =>
             {
                 running = true;
                 int i = 0;
