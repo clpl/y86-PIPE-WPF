@@ -154,6 +154,30 @@ namespace Y86vmWpf.Model
             fs.Close();
             br.Close();
         }
+
+        public void ReadFromText()
+        {
+            //jmp 487512
+            mem.Clear();
+            string code = vcode;
+            for(int i=0;i+1<code.Length;)
+            {
+                int temp = 0;
+                int precode = Convert.ToInt32(code[i]-'0');
+                int aftcode = Convert.ToInt32(code[i+1]-'0');
+                temp = temp | (precode << 4);
+                temp = temp | aftcode;
+                mem.Write(i / 2, (byte)temp);
+                while(!char.IsDigit(code[i]))
+                {
+                    i++;
+                }
+                i += 2;
+                Console.WriteLine(temp);
+            }
+            string s;
+            s = "wee";
+        }
         #endregion
 
         #region Fetch
@@ -763,6 +787,7 @@ namespace Y86vmWpf.Model
         public string vW_dstE;
         public string vW_dstM;
         public string vrunSpeed;
+        public string vcode;
 
         public string veax;
         public string vecx;
@@ -905,6 +930,7 @@ namespace Y86vmWpf.Model
         public string VW_dstE { get => vW_dstE; set { vW_dstE = value; RaisePropertyChanged(() => VW_dstE); } }
         public string VW_dstM { get => vW_dstM; set { vW_dstM = value; RaisePropertyChanged(() => VW_dstM); } }
         public string VrunSpeed { get => vrunSpeed; set { vrunSpeed = value; RaisePropertyChanged(() => VrunSpeed); } }
+        public string Vcode { get => vcode; set { vcode = value; RaisePropertyChanged(() => Vcode); } }
 
         public string Veax { get => veax; set { veax = value; RaisePropertyChanged(() => Veax); } }
         public string Vecx { get => vecx; set { vecx = value; RaisePropertyChanged(() => Vecx); } }
@@ -965,6 +991,12 @@ namespace Y86vmWpf.Model
             arr = new byte[MAX_MEM];
             cache = new byte[MAX_CACHE];
            
+            Array.Clear(arr, 0, arr.Length);
+            Array.Clear(cache, 0, cache.Length);
+        }
+
+        public void Clear()
+        {
             Array.Clear(arr, 0, arr.Length);
             Array.Clear(cache, 0, cache.Length);
         }

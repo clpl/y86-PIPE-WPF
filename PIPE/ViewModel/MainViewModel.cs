@@ -95,6 +95,18 @@ namespace Y86vmWpf.ViewModel
             set { astep = value; }
         }
 
+        private RelayCommand loadCode;
+
+        public RelayCommand LoadCode
+        {
+            get
+            {
+                if (loadCode == null) return new RelayCommand(() => LoadCodeExcuteValidForm(), CanExcute);
+                return loadCode;
+            }
+            set { loadCode = value; }
+        }
+
         private void AstepExcuteValidForm()
         {
             RunAStep();
@@ -108,6 +120,37 @@ namespace Y86vmWpf.ViewModel
         public void RunAStep()
         {
             Y86.Run();
+        }
+
+        public void LoadCodeExcuteValidForm()
+        {
+            Assembler asm = new Assembler();
+            string code = Y86.Vcode.Trim();
+            string result="";
+            int i = 0;
+            while(i<code.Length)
+            {
+                string temp ="";
+                if (i >= code.Length)
+                    break;
+                while (i < code.Length && !(char.IsDigit(code[i]) || char.IsLetter(code[i])))
+                    i++;
+
+                while (i < code.Length && code[i]!='\r')
+                {
+                    temp += code[i];
+                    i++;
+                }
+                temp += ' ';
+                result += asm.assemble(temp);
+
+
+            }
+            //Console.WriteLine(Y86.Vcode.Trim());
+            Y86.vcode = result;
+            Y86.Vcode = Y86.vcode;
+            Y86.ReadFromText();
+            Console.WriteLine(Y86.vcode);
         }
 
         private bool running = true; 

@@ -63,8 +63,8 @@
             <Label Content="ebp" HorizontalAlignment="Left" Margin="521,162,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
             <Label Content="esi" HorizontalAlignment="Left" Margin="521,135,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
             <Label Content="edi" HorizontalAlignment="Left" Margin="521,108,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <TextBox HorizontalAlignment="Left" Height="315" Margin="722,243,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="258"/>
-            <Button Content="Load code" HorizontalAlignment="Left" Margin="722,202,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+            <TextBox HorizontalAlignment="Left" Height="315" Margin="722,243,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vcode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="258" AcceptsReturn="True"/>
+            <Button Content="Load code" Command="{Binding LoadCode}" HorizontalAlignment="Left" Margin="722,202,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
 
 
         </Grid>
