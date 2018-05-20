@@ -162,7 +162,7 @@ namespace Y86vmWpf.ViewModel
             string s = asm.assemble("jne 487");
             Console.WriteLine(s);
             
-            /*Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(() =>
             {
                 running = true;
                 int i = 0;
@@ -182,7 +182,7 @@ namespace Y86vmWpf.ViewModel
                 }
                 
             });
-            */
+            
         }
     }
 }

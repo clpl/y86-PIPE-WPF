@@ -163,15 +163,28 @@ namespace Y86vmWpf.Model
             for(int i=0;i+1<code.Length;)
             {
                 int temp = 0;
-                int precode = Convert.ToInt32(code[i]-'0');
-                int aftcode = Convert.ToInt32(code[i+1]-'0');
+                int precode, aftcode;
+                if (char.IsDigit(code[i]))
+                    precode = Convert.ToInt32(code[i] - '0');
+                else if(char.IsUpper(code[i]))
+                    precode = Convert.ToInt32(code[i] - 'A' + 10);
+                else
+                    precode = Convert.ToInt32(code[i] - 'a' + 10);
+                if (char.IsDigit(code[i + 1]))
+                    aftcode = Convert.ToInt32(code[i + 1] - '0');
+                else if (char.IsUpper(code[i + 1]))
+                    aftcode = Convert.ToInt32(code[i + 1] - 'A' + 10);
+                else
+                    aftcode = Convert.ToInt32(code[i + 1] - 'a' + 10);
                 temp = temp | (precode << 4);
                 temp = temp | aftcode;
                 mem.Write(i / 2, (byte)temp);
-                while(!char.IsDigit(code[i]))
+                /*
+                 * while(!char.IsDigit(code[i]))
                 {
                     i++;
                 }
+                */
                 i += 2;
                 Console.WriteLine(temp);
             }
@@ -250,7 +263,7 @@ namespace Y86vmWpf.Model
 
             if (need_regids)
             {
-                temp = tools.ByteSplit(mem.Read(f_pc + 1));
+                temp = tools.ByteSplit(mem.Read(f_pc));
                 f_rA = temp[0];
                 f_rB = temp[1];
                 f_pc += 1;
@@ -888,13 +901,13 @@ namespace Y86vmWpf.Model
             */
 
             reg_file[0] = Convert.ToInt64(Veax);
-            reg_file[0] = Convert.ToInt64(vecx);
-            reg_file[0] = Convert.ToInt64(Vedx);
-            reg_file[0] = Convert.ToInt64(Vebx);
-            reg_file[0] = Convert.ToInt64(Vesp);
-            reg_file[0] = Convert.ToInt64(Vebp);
-            reg_file[0] = Convert.ToInt64(Vesi);
-            reg_file[0] = Convert.ToInt64(Vedi);
+            reg_file[1] = Convert.ToInt64(vecx);
+            reg_file[2] = Convert.ToInt64(Vedx);
+            reg_file[3] = Convert.ToInt64(Vebx);
+            reg_file[4] = Convert.ToInt64(Vesp);
+            reg_file[5] = Convert.ToInt64(Vebp);
+            reg_file[6] = Convert.ToInt64(Vesi);
+            reg_file[7] = Convert.ToInt64(Vedi);
 
         }
 
