@@ -128,9 +128,15 @@ namespace Y86vmWpf.ViewModel
             string code = Y86.Vcode.Trim();
             string result="";
             int i = 0;
+            string disresult = "";
+            int wei = 0;
+            int cnt = 0;
             while(i<code.Length)
             {
+                cnt++;
+                wei = result.Length;
                 string temp ="";
+                string tempresult = "";
                 if (i >= code.Length)
                     break;
                 while (i < code.Length && !(char.IsDigit(code[i]) || char.IsLetter(code[i])))
@@ -142,12 +148,15 @@ namespace Y86vmWpf.ViewModel
                     i++;
                 }
                 temp += ' ';
-                result += asm.assemble(temp);
+                tempresult = asm.assemble(temp);
+                result += tempresult;
 
-
+                disresult += cnt + ": " + "0x"+ wei.ToString("x16").Substring(12) + "  "+ tempresult + "  |  " + temp;
+                disresult += '\n';
             }
             //Console.WriteLine(Y86.Vcode.Trim());
-            Y86.vcode = result;
+            Y86.ccode = result;
+            Y86.vcode = disresult;
             Y86.Vcode = Y86.vcode;
             Y86.ReadFromText();
             Console.WriteLine(Y86.vcode);

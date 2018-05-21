@@ -27,6 +27,7 @@ namespace Y86vmWpf.Model
         const int MAX_ICODE = 0xB;
         const Int64 MAX_MEM = 1 << 8;
 
+        public string ccode = "";
         Int64 cycle_cnt;
         MemArr mem;
         Int64[] reg_file;
@@ -159,7 +160,7 @@ namespace Y86vmWpf.Model
         {
             //jmp 487512
             mem.Clear();
-            string code = vcode;
+            string code = ccode;
             for(int i=0;i+1<code.Length;)
             {
                 int temp = 0;
@@ -821,37 +822,37 @@ namespace Y86vmWpf.Model
 
         public void ConvertViewModel()
         {
-            VD_icode = D_icode.ToString();
-            VE_icode = E_icode.ToString();
+            VD_icode = D_icode.ToString("X");
+            VE_icode = E_icode.ToString("X");
             //Console.WriteLine(D_icode);
-            VM_icode = M_icode.ToString();
-            VW_icode = W_icode.ToString();
-            VD_stat = D_stat.ToString();
-            VD_ifun = D_ifun.ToString();
-            VD_rA = D_rA.ToString();
-            VD_rB = D_rB.ToString();
-            VD_valC = D_valC.ToString();
-            VD_valP = D_valP.ToString();
-            VE_stat = E_stat.ToString();
-            VE_ifun = E_ifun.ToString();
-            VE_valC = E_valC.ToString();
-            VE_valA = E_valA.ToString();
-            VE_valB = E_valB.ToString();
-            VE_dstE = E_dstE.ToString();
-            VE_dstM = E_dstM.ToString();
-            VE_srcA = E_srcA.ToString();
-            VE_srcB = E_srcB.ToString();
-            VM_stat = M_stat.ToString();
+            VM_icode = M_icode.ToString("X");
+            VW_icode = W_icode.ToString("X");
+            VD_stat = D_stat.ToString("X");
+            VD_ifun = D_ifun.ToString("X");
+            VD_rA = D_rA.ToString("X");
+            VD_rB = D_rB.ToString("X");
+            VD_valC = D_valC.ToString("X");
+            VD_valP = D_valP.ToString("X");
+            VE_stat = E_stat.ToString("X");
+            VE_ifun = E_ifun.ToString("X");
+            VE_valC = E_valC.ToString("X");
+            VE_valA = E_valA.ToString("X");
+            VE_valB = E_valB.ToString("X");
+            VE_dstE = E_dstE.ToString("X");
+            VE_dstM = E_dstM.ToString("X");
+            VE_srcA = E_srcA.ToString("X");
+            VE_srcB = E_srcB.ToString("X");
+            VM_stat = M_stat.ToString("X");
             VM_Cnd = M_Cnd.ToString();
-            VM_valE = M_valE.ToString();
-            VM_valA = M_valA.ToString();
-            VM_dstE = M_dstE.ToString();
-            VM_dstM = M_dstM.ToString();
-            VW_stat = W_stat.ToString();
-            VW_valE = W_valE.ToString();
-            VW_valM = W_valM.ToString();
-            VW_dstE = W_dstE.ToString();
-            VW_dstM = W_dstM.ToString();
+            VM_valE = M_valE.ToString("X");
+            VM_valA = M_valA.ToString("X");
+            VM_dstE = M_dstE.ToString("X");
+            VM_dstM = M_dstM.ToString("X");
+            VW_stat = W_stat.ToString("X");
+            VW_valE = W_valE.ToString("X");
+            VW_valM = W_valM.ToString("X");
+            VW_dstE = W_dstE.ToString("X");
+            VW_dstM = W_dstM.ToString("X");
             VrunSpeed = runSpeed.ToString();
             Vcycle_cnt = cycle_cnt.ToString();
             long eax = reg_file[0];
@@ -877,10 +878,10 @@ namespace Y86vmWpf.Model
 
         public void ConvertData()
         {
-            D_icode = Convert.ToInt64(VD_icode);
-            E_icode = Convert.ToInt64(VE_icode);
-            M_icode = Convert.ToInt64(VM_icode);
-            W_icode = Convert.ToInt64(VW_icode);
+            //D_icode = Convert.ToInt64(VD_icode);
+           // E_icode = Convert.ToInt64(VE_icode);
+            //M_icode = Convert.ToInt64(VM_icode);
+           // W_icode = Convert.ToInt64(VW_icode);
             //runSpeed = Convert.ToInt64(VrunSpeed);
             /*
             D_ifun = Convert.ToInt64(VD_ifun);
@@ -985,42 +986,36 @@ namespace Y86vmWpf.Model
 
 
     #region MEM
+    //存储器接口
     interface IMem
     {
         byte Read(Int64 addr);
         void Write(Int64 addr, byte data);
     }
 
-    class CacheClass
-    {
-        
-    }
-
-    //memory
+    //主存
     class MemArr : IMem
     {
+        //内存大小
         private const Int64 MAX_MEM = 1 << 8;
         private byte[] arr;
 
-        private const Int64 MAX_CACHE = 1 << 4;
-        private byte[] cache;
-
+        //内存构造函数
         public MemArr()
         {
             //init
             arr = new byte[MAX_MEM];
-            cache = new byte[MAX_CACHE];
            
             Array.Clear(arr, 0, arr.Length);
-            Array.Clear(cache, 0, cache.Length);
         }
 
+        //内存清零，初始化
         public void Clear()
         {
             Array.Clear(arr, 0, arr.Length);
-            Array.Clear(cache, 0, cache.Length);
         }
 
+        //整块写入内存
         public void SetMem(byte[] init_array)
         {
             Int64 len = init_array.Length;
@@ -1030,21 +1025,17 @@ namespace Y86vmWpf.Model
             }
         }
 
+        //阅读addr地址的一个字节数据
         public byte Read(Int64 addr)
         {
             return arr[addr];
         }
 
+        //写入一个字节到addr中
         public void Write(Int64 addr, byte data)
         {
             arr[addr] = data;
         }
-
-        private void MemToCache(Int64 addr)
-        {
-
-        }
-
     }
     #endregion
 
