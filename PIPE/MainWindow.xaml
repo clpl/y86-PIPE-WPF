@@ -55,14 +55,14 @@
             <TextBox HorizontalAlignment="Left" Height="22" Margin="567,243,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vebp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="567,270,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vesi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="567,297,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vedi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
-            <Label Content="eax" HorizontalAlignment="Left" Margin="521,297,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <Label Content="ecx" HorizontalAlignment="Left" Margin="521,270,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <Label Content="edx" HorizontalAlignment="Left" Margin="521,243,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <Label Content="ebx" HorizontalAlignment="Left" Margin="521,216,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <Label Content="esp" HorizontalAlignment="Left" Margin="521,189,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <Label Content="ebp" HorizontalAlignment="Left" Margin="521,162,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <Label Content="esi" HorizontalAlignment="Left" Margin="521,135,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <Label Content="edi" HorizontalAlignment="Left" Margin="521,108,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="edi" HorizontalAlignment="Left" Margin="521,297,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="esi" HorizontalAlignment="Left" Margin="521,270,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="ebp" HorizontalAlignment="Left" Margin="521,243,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="esp" HorizontalAlignment="Left" Margin="521,216,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="ebx" HorizontalAlignment="Left" Margin="521,189,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="edx" HorizontalAlignment="Left" Margin="521,162,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="ecx" HorizontalAlignment="Left" Margin="521,135,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
+            <Label Content="eax" HorizontalAlignment="Left" Margin="521,108,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
             <TextBox HorizontalAlignment="Left" Height="315" Margin="722,243,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vcode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="258" AcceptsReturn="True"/>
             <Button Content="Load code" Command="{Binding LoadCode}" HorizontalAlignment="Left" Margin="722,202,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
 

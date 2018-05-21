@@ -93,8 +93,8 @@ namespace Y86vmWpf.Model
         const byte REBP = 5;//%ebp
         const byte RESI = 6;//%esi
         const byte REDI = 7;//%edi
-        const Int64 RNONE = 0xF;//no register
-        const Int64 RNOP = 0;//value when register in bubble
+        const byte RNONE = 0xF;//no register
+        const byte RNOP = 0;//value when register in bubble
 
         public long RunSpeed { get => runSpeed; set => runSpeed = value; }
         public bool IsRun { get => isRun; set => isRun = value; }
@@ -260,6 +260,7 @@ namespace Y86vmWpf.Model
             else
                 need_valC = false;
             f_pc += 1;
+            f_valC = 0;
 
             if (need_regids)
             {
@@ -267,11 +268,13 @@ namespace Y86vmWpf.Model
                 f_rA = temp[0];
                 f_rB = temp[1];
                 f_pc += 1;
+            }else
+            {
+                f_rB = f_rA = RNONE;
             }
             if (need_valC)
             {
                 byte[] temp8 = new byte[8];
-                f_valC = 0;
                 for (int i = 0; i < 4; i++)
                 {
                     temp8[i] = mem.Read(f_pc + i);
@@ -321,7 +324,7 @@ namespace Y86vmWpf.Model
             //select d_srcB
             switch (D_icode)
             {
-                case IRRMOVL:
+                case IMRMOVL:
                 case IRMMOVL:
                 case IOPL:
                     d_srcB = D_rB;
@@ -453,6 +456,10 @@ namespace Y86vmWpf.Model
                 case ICALL:
                 case IPUSHL:
                     aluA = -4;
+                    break;
+                case IPOPL:
+                case IRET:
+                    aluA = 4;
                     break;
                 default:
                     aluA = 0;
@@ -750,11 +757,11 @@ namespace Y86vmWpf.Model
         #region GenerateNormalState
         void GenerateNormalState()
         {
-            Fetch();
-            Decode();
-            Execute();
-            Memory();
             Write_back();
+            Memory();
+            Execute();
+            Decode();
+            Fetch();    
         }
         #endregion
 
