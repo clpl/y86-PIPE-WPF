@@ -5,6 +5,7 @@ using System.Threading;
 using Y86vmWpf.Model;
 using PIPE.Model;
 using System;
+using System.IO;
 
 namespace Y86vmWpf.ViewModel
 {
@@ -119,6 +120,19 @@ namespace Y86vmWpf.ViewModel
             set { showmem = value; }
         }
 
+        private RelayCommand openTxt;
+
+        public RelayCommand OpenTxt
+        {
+            get
+            {
+                if (openTxt == null) return new RelayCommand(() => OpenTxtExcuteValidForm(), CanExcute);
+                return openTxt;
+            }
+            set { openTxt = value; }
+        }
+
+        
         private void AstepExcuteValidForm()
         {
             RunAStep();
@@ -177,6 +191,19 @@ namespace Y86vmWpf.ViewModel
         public void ShowmemExcuteValidForm()
         {
             Y86.GetMemData();
+        }
+
+        public void OpenTxtExcuteValidForm()
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.DefaultExt = ".txt";
+            
+            if (ofd.ShowDialog() == true)
+            {
+                
+                Y86.Vcode = File.ReadAllText(ofd.FileName);
+                Console.WriteLine(Y86.Vcode);
+            }
         }
 
         private bool running = true; 
