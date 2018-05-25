@@ -1,0 +1,30 @@
+﻿  irmovl $10,%edx
+  irmovl  $3,%eax
+  addl %edx,%eax
+irmovl $128,%edx     
+irmovl  $3,%ecx      
+rmmovl %ecx, 0(%edx)
+irmovl  $10,%ebx     
+mrmovl 0(%edx), %eax 
+addl %ebx,%eax
+  irmovl $10,%edx
+  irmovl  $3,%edx
+  rrmovl %edx,%eax
+  irmovl 256,%esp 
+  call 0x76        
+  irmovl $10,%edx                             
+  rrmovl %edx,%ebx  
+xorl %eax,%eax   
+jne  0x100    
+irmovl $1, %eax  
+irmovl $1,%eax
+xorl %esp,%esp        
+pushl %eax           
+addl  %eax,%eax       
+irmovl $2, %eax       
+irmovl $3, %eax  
+popl %eax   
+pushl %eax
+addl %eax,%edx
+popl %eax
+ret  

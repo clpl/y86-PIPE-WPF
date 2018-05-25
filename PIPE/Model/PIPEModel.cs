@@ -214,7 +214,7 @@ namespace Y86vmWpf.Model
 
             bool instr_valid, imem_error, need_regids,need_valC;
 
-            if(imem_icode >= MAX_ICODE)
+            if(imem_icode > MAX_ICODE)
             {
                 imem_error = true;
             }
@@ -864,14 +864,14 @@ namespace Y86vmWpf.Model
             long esi = reg_file[6];
             long edi = reg_file[7];
 
-            Veax = eax.ToString();
-            Vecx = ecx.ToString();
-            Vedx = edx.ToString();
-            Vebx = ebx.ToString();
-            Vesp = esp.ToString();
-            Vebp = ebp.ToString();
-            Vesi = esi.ToString();
-            Vedi = edi.ToString();
+            Veax = eax.ToString("X");
+            Vecx = ecx.ToString("X");
+            Vedx = edx.ToString("X");
+            Vebx = ebx.ToString("X");
+            Vesp = esp.ToString("X");
+            Vebp = ebp.ToString("X");
+            Vesi = esi.ToString("X");
+            Vedi = edi.ToString("X");
 
 
         }
@@ -907,7 +907,7 @@ namespace Y86vmWpf.Model
             W_dstE = Convert.ToInt64(VW_dstE);
             W_dstM = Convert.ToInt64(VW_dstM);
             */
-
+            /*
             reg_file[0] = Convert.ToInt64(Veax);
             reg_file[1] = Convert.ToInt64(vecx);
             reg_file[2] = Convert.ToInt64(Vedx);
@@ -916,6 +916,7 @@ namespace Y86vmWpf.Model
             reg_file[5] = Convert.ToInt64(Vebp);
             reg_file[6] = Convert.ToInt64(Vesi);
             reg_file[7] = Convert.ToInt64(Vedi);
+            */
 
         }
 
@@ -997,7 +998,7 @@ namespace Y86vmWpf.Model
     class MemArr : IMem
     {
         //内存大小
-        private const Int64 MAX_MEM = 1 << 8;
+        private const Int64 MAX_MEM = 1024;
         private byte[] arr;
 
         //内存构造函数

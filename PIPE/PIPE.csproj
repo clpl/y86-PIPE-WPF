@@ -118,7 +118,9 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="images\code.txt" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="images\pipe.jpg" />
   </ItemGroup>

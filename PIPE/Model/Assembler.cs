@@ -15,6 +15,9 @@ namespace PIPE.Model
         string[] reg = { "%eax", "%ecx", "%edx", "%ebx", "%esp", "%ebp", "%esi", "%edi" };
         string[] op = { "addl", "subl", "andl", "xorl" };
         string[] cmp = { "le", "l", "e", "ne", "ge", "g" };
+
+
+
         public Assembler()
         {
             four_bits = new string[12];
