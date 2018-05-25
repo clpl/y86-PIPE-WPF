@@ -187,7 +187,7 @@ namespace Y86vmWpf.ViewModel
                     
                     if (!running)
                         break;
-                    Thread.Sleep(10);
+                    Thread.Sleep(5);
                 }
                 
             });

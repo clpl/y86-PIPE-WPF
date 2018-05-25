@@ -25,7 +25,7 @@ namespace Y86vmWpf.Model
 
         const Int64 bit_width = 64;
         const int MAX_ICODE = 0xB;
-        const Int64 MAX_MEM = 1 << 8;
+        const Int64 MAX_MEM = 1024+1000;
 
         public string ccode = "";
         Int64 cycle_cnt;
@@ -140,6 +140,7 @@ namespace Y86vmWpf.Model
             mem = new MemArr();
             reg_file = new Int64[9];
             Array.Clear(reg_file, 0, reg_file.Length);
+            reg_file[4] = 300;
 
         }
 
@@ -197,6 +198,7 @@ namespace Y86vmWpf.Model
         #region Fetch
         void Fetch()
         {
+
             //Select f_pc from the source
             if (M_icode == IJXX && !M_Cnd)
                 f_pc = M_valA;
@@ -590,8 +592,11 @@ namespace Y86vmWpf.Model
                     m_valM = 0;
                     for (int i = 0; i < 4; i++)
                     {
-                        m_valM <<= 8;
-                        m_valM += mem.Read(mem_addr + i);                       
+                        int swe = 0;
+                        //m_valM <<= 8;
+                        m_valM += mem.Read(mem_addr - i) << (8 * i);
+                        if (m_valM == 0x47)
+                            swe++;
                     }
                 }
                 else
@@ -599,11 +604,15 @@ namespace Y86vmWpf.Model
                 if (mem_write)
                 {
                     for (int i = 0; i < 4; i++)                       
-                        mem.Write(mem_addr, (byte)((M_valA >> (8 * i)) & 0xff));
+                        mem.Write(mem_addr - i, (byte)((M_valA >> (8 * i)) & 0xff));
                 }
             }
             //Update the status
-            m_stat = dmem_error ? SADR : M_stat;
+            if (dmem_error)
+                m_stat = SADR;
+            else
+                m_stat = M_stat;
+            
         }
         #endregion
 
@@ -653,7 +662,7 @@ namespace Y86vmWpf.Model
                 D_bubble = false;
 
             E_stall = false;
-            if ((E_icode == IJXX && !e_Cnd) || (E_icode == IMRMOVL || E_icode == IPOPL) && (E_dstM == d_srcA || E_dstM == d_srcB))
+            if ((E_icode == IJXX && !e_Cnd) || ((E_icode == IMRMOVL || E_icode == IPOPL) && (E_dstM == d_srcA || E_dstM == d_srcB)))
                 E_bubble = true;
             else
                 E_bubble = false;
