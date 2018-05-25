@@ -262,7 +262,10 @@ namespace Y86vmWpf.Model
                 need_valC = true;
             else
                 need_valC = false;
-            f_pc += 1;
+
+            if(W_stat != SHLT)
+                f_pc += 1;
+
             f_valC = 0;
 
             if (need_regids)
@@ -369,10 +372,14 @@ namespace Y86vmWpf.Model
                                
                                
                                
-            if (D_icode == ICALL || D_icode == IJXX)
+            if (D_icode == ICALL)
             {
                 d_valA = D_valP;
                 Forwarding_A = "NULL";
+            }
+            else if(D_icode == IJXX)
+            {
+                d_valA = D_valC;
             }
             else if (d_srcA == e_dstE)
             {
@@ -592,11 +599,7 @@ namespace Y86vmWpf.Model
                     m_valM = 0;
                     for (int i = 0; i < 4; i++)
                     {
-                        int swe = 0;
-                        //m_valM <<= 8;
-                        m_valM += mem.Read(mem_addr - i) << (8 * i);
-                        if (m_valM == 0x47)
-                            swe++;
+                        m_valM += mem.Read(mem_addr - i) << (8 * i);                      
                     }
                 }
                 else
@@ -818,6 +821,8 @@ namespace Y86vmWpf.Model
         public string vW_dstM;
         public string vrunSpeed;
         public string vcode;
+        public string vask;
+        public string vans;
 
         public string veax;
         public string vecx;
@@ -962,6 +967,8 @@ namespace Y86vmWpf.Model
         public string VW_dstM { get => vW_dstM; set { vW_dstM = value; RaisePropertyChanged(() => VW_dstM); } }
         public string VrunSpeed { get => vrunSpeed; set { vrunSpeed = value; RaisePropertyChanged(() => VrunSpeed); } }
         public string Vcode { get => vcode; set { vcode = value; RaisePropertyChanged(() => Vcode); } }
+        public string Vask { get => vask; set { vask = value; RaisePropertyChanged(() => Vask); } }
+        public string Vans { get => vans; set { vans = value; RaisePropertyChanged(() => Vans); } }
 
         public string Veax { get => veax; set { veax = value; RaisePropertyChanged(() => Veax); } }
         public string Vecx { get => vecx; set { vecx = value; RaisePropertyChanged(() => Vecx); } }
@@ -989,6 +996,11 @@ namespace Y86vmWpf.Model
             }
         }
 
+        public void GetMemData()
+        {
+            Vans = mem.ReadADoubleWord(Convert.ToInt64(Vask)).ToString("X");
+        }
+
         string icode = "i";
         #endregion
     }
@@ -1007,7 +1019,7 @@ namespace Y86vmWpf.Model
     class MemArr : IMem
     {
         //内存大小
-        private const Int64 MAX_MEM = 1024;
+        private const Int64 MAX_MEM = 0x1000;
         private byte[] arr;
 
         //内存构造函数
@@ -1039,6 +1051,17 @@ namespace Y86vmWpf.Model
         public byte Read(Int64 addr)
         {
             return arr[addr];
+        }
+
+        public Int64 ReadADoubleWord(Int64 addr)
+        {
+            Int64 m_valM = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                m_valM += this.Read(addr - i) << (8 * i);
+            }
+            return m_valM;
+
         }
 
         //写入一个字节到addr中

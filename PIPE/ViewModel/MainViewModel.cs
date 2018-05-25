@@ -107,6 +107,18 @@ namespace Y86vmWpf.ViewModel
             set { loadCode = value; }
         }
 
+        private RelayCommand showmem;
+
+        public RelayCommand Showmem
+        {
+            get
+            {
+                if (showmem == null) return new RelayCommand(() => ShowmemExcuteValidForm(), CanExcute);
+                return showmem;
+            }
+            set { showmem = value; }
+        }
+
         private void AstepExcuteValidForm()
         {
             RunAStep();
@@ -150,8 +162,8 @@ namespace Y86vmWpf.ViewModel
                 temp += ' ';
                 tempresult = asm.assemble(temp);
                 result += tempresult;
-
-                disresult += cnt + ": " + "0x"+ wei.ToString("x16").Substring(12) + "  "+ tempresult + "  |  " + temp;
+                disresult += string.Format("{0}:0x{1} {2,-20} | {3}",cnt, (wei / 2).ToString("x16").Substring(12), tempresult.Trim(), temp);
+                //disresult += cnt + ": " + "0x"+ (wei/2).ToString("x16").Substring(12) + "  "+ tempresult + "  |  " + temp;
                 disresult += '\n';
             }
             //Console.WriteLine(Y86.Vcode.Trim());
@@ -160,6 +172,11 @@ namespace Y86vmWpf.ViewModel
             Y86.Vcode = Y86.vcode;
             Y86.ReadFromText();
             Console.WriteLine(Y86.vcode);
+        }
+
+        public void ShowmemExcuteValidForm()
+        {
+            Y86.GetMemData();
         }
 
         private bool running = true; 

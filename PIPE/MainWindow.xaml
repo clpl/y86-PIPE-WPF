@@ -63,8 +63,11 @@
             <Label Content="edx" HorizontalAlignment="Left" Margin="521,162,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
             <Label Content="ecx" HorizontalAlignment="Left" Margin="521,135,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
             <Label Content="eax" HorizontalAlignment="Left" Margin="521,108,0,0" VerticalAlignment="Top" Height="22" Width="41"/>
-            <TextBox HorizontalAlignment="Left" Height="430" Margin="662,226,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vcode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="346" AcceptsReturn="True"/>
-            <Button Content="Load code" Command="{Binding LoadCode}" HorizontalAlignment="Left" Margin="722,202,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+            <TextBox HorizontalAlignment="Left" Height="430" Margin="664,145,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vcode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="346" AcceptsReturn="True"/>
+            <Button Content="Load code" Command="{Binding LoadCode}" HorizontalAlignment="Left" Margin="728,121,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+            <TextBox HorizontalAlignment="Left" Height="35" Margin="521,365,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vask, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <TextBox HorizontalAlignment="Left" Height="35" Margin="589,365,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vans, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+            <Button Content="show MEM" Command="{Binding Showmem}" HorizontalAlignment="Left" Margin="521,415,0,0" VerticalAlignment="Top" Width="131" Click="Button_Click"/>
 
 
         </Grid>
