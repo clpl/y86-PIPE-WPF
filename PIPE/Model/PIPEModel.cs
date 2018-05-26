@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using GalaSoft.MvvmLight;
 using System.IO;
+using System.Windows;
 
 namespace Y86vmWpf.Model
 {
@@ -19,7 +20,7 @@ namespace Y86vmWpf.Model
         #endregion
 
         #region DefineData
-        string code;
+        Int64 forward_num, stall_num, bubble_num;
         const String filepath = "bcode.bin";
         ITools tools;
 
@@ -141,7 +142,10 @@ namespace Y86vmWpf.Model
             reg_file = new Int64[9];
             Array.Clear(reg_file, 0, reg_file.Length);
             reg_file[4] = 300;
+            Vesp = vesp = "300";
+            bubble_num = stall_num = forward_num = 0;
 
+            MessageBox.Show("yes");
         }
 
         void ReadFromFile()
@@ -263,8 +267,10 @@ namespace Y86vmWpf.Model
             else
                 need_valC = false;
 
-            if(W_stat != SHLT)
+            if (W_stat != SHLT)
                 f_pc += 1;
+            else
+                f_pc = f_pc;
 
             f_valC = 0;
 
@@ -369,9 +375,11 @@ namespace Y86vmWpf.Model
                 d_dstM = D_rA;
             else
                 d_dstM = RNONE;
-                               
-                               
-                               
+
+
+            forward_num++;
+
+
             if (D_icode == ICALL)
             {
                 d_valA = D_valP;
@@ -408,9 +416,12 @@ namespace Y86vmWpf.Model
             }
             else
             {
+                forward_num--;
                 d_valA = reg_file[d_srcA];
                 Forwarding_A = "NULL";
             }
+
+            forward_num++;
             //Fwd B module
             if (d_srcB == e_dstE)
             {
@@ -439,6 +450,7 @@ namespace Y86vmWpf.Model
             }
             else
             {
+                forward_num--;
                 d_valB = reg_file[d_srcB];
                 Forwarding_B = "NULL";
             }
@@ -681,7 +693,12 @@ namespace Y86vmWpf.Model
                 W_stall = true;
             else
                 W_stall = false;
-            
+
+            bubble_num += Convert.ToInt32(F_bubble) + Convert.ToInt32(D_bubble) + Convert.ToInt32(E_bubble) + Convert.ToInt32(M_bubble) + Convert.ToInt32(W_bubble);
+
+            stall_num += Convert.ToInt32(F_stall) + Convert.ToInt32(D_stall) + Convert.ToInt32(E_stall) + Convert.ToInt32(M_stall) + Convert.ToInt32(W_stall);
+
+
         }
         #endregion
 
@@ -907,6 +924,7 @@ namespace Y86vmWpf.Model
             // W_icode = Convert.ToInt64(VW_icode);
             //runSpeed = Convert.ToInt64(VrunSpeed);
             
+            /*
             D_ifun = Convert.ToInt64(VD_ifun);
             D_rA = Convert.ToInt64(VD_rA);
             D_rB = Convert.ToInt64(VD_rB);
@@ -929,7 +947,7 @@ namespace Y86vmWpf.Model
             W_valM = Convert.ToInt64(VW_valM);
             W_dstE = Convert.ToInt64(VW_dstE);
             W_dstM = Convert.ToInt64(VW_dstM);
-            
+            */
            
             reg_file[0] = Convert.ToInt64(Veax);
             reg_file[1] = Convert.ToInt64(vecx);

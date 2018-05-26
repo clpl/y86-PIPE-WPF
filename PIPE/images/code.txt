@@ -1,30 +1,40 @@
-﻿  irmovl $10,%edx
-  irmovl  $3,%eax
-  addl %edx,%eax
-irmovl $128,%edx     
-irmovl  $3,%ecx      
-rmmovl %ecx, 0(%edx)
-irmovl  $10,%ebx     
-mrmovl 0(%edx), %eax 
-addl %ebx,%eax
-  irmovl $10,%edx
-  irmovl  $3,%edx
-  rrmovl %edx,%eax
-  irmovl 256,%esp 
-  call 0x76        
-  irmovl $10,%edx                             
-  rrmovl %edx,%ebx  
-xorl %eax,%eax   
-jne  0x100    
-irmovl $1, %eax  
-irmovl $1,%eax
-xorl %esp,%esp        
-pushl %eax           
-addl  %eax,%eax       
-irmovl $2, %eax       
-irmovl $3, %eax  
-popl %eax   
-pushl %eax
-addl %eax,%edx
-popl %eax
-ret  
+﻿1	irmovl $10,%edx       ||	edx = 10
+2	irmovl  $3,%eax		  ||	eax = 3
+3	addl %edx,%eax		  ||	eax = edx + eax = 13
+4	irmovl $528,%edx      ||	edx = 528
+5	irmovl  $3,%ecx       ||	ecx = 3
+6	rmmovl %ecx, 0(%edx)  ||	M(edx) = ecx
+7	irmovl  $10,%ebx      ||	ebx = 10
+8	mrmovl 0(%edx), %eax  ||	eax = M(edx)
+9	addl %ebx,%eax		  ||	eax = ebx + eax
+10	irmovl $10,%edx		  ||	edx = 10
+11	irmovl  $3,%edx		  ||	edx = 3
+12	rrmovl %edx,%eax	  ||	eax = edx
+13	irmovl $256,%ebp 	  ||	ebp = 256
+14	call 0x77        	  ||	jump to 22
+15	irmovl $10,%edx       ||    edx = 10                  
+16	rrmovl %edx,%ebx  	  ||	ebx = edx
+17	xorl %eax,%eax   	  ||	eax = eax ^ eax
+18	jne  0x7e    		  ||	if(eax == 0) jump to 32
+19	irmovl $1, %eax  	  ||		
+20	irmovl $1,%eax		  ||
+21	xorl %ebp,%ebp        ||
+22	pushl %eax            ||
+23	addl  %eax,%eax       ||
+24	irmovl $2, %eax       ||
+25	irmovl $3, %eax  	  ||
+26	halt				  ||	
+27	popl %eax   		  ||	
+28	pushl %eax			  ||	push eax
+29	addl %eax,%edx		  ||	edx = eax + edx
+30	popl %eax			  ||	pop eax
+31	ret  				  ||	ret
+32	irmovl $1, %eax  	  ||	eax = 1
+33	irmovl $1,%eax		  ||	eax = 1
+34	xorl %ebp,%ebp        ||	ebp = ebp ^ ebp
+35	je 0x7e               ||	if(eax != 0) jump to 32
+35	pushl %eax            ||	push eax
+36	addl  %eax,%eax       ||	eax = eax + eax
+37	irmovl $2, %eax       ||	eax = 2
+38	irmovl $3, %eax  	  ||	eax = 3
+39	halt				  ||	halt
