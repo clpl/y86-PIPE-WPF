@@ -824,6 +824,12 @@ namespace Y86vmWpf.Model
         public string vask;
         public string vans;
 
+        public string vW_s;
+        public string vM_s;
+        public string vE_s;
+        public string vD_s;
+        public string vF_s;
+
         public string veax;
         public string vecx;
         public string vedx;
@@ -843,30 +849,30 @@ namespace Y86vmWpf.Model
             VW_icode = W_icode.ToString("X");
             VD_stat = D_stat.ToString("X");
             VD_ifun = D_ifun.ToString("X");
-            VD_rA = D_rA.ToString("X");
-            VD_rB = D_rB.ToString("X");
-            VD_valC = D_valC.ToString("X");
-            VD_valP = D_valP.ToString("X");
-            VE_stat = E_stat.ToString("X");
-            VE_ifun = E_ifun.ToString("X");
-            VE_valC = E_valC.ToString("X");
-            VE_valA = E_valA.ToString("X");
-            VE_valB = E_valB.ToString("X");
-            VE_dstE = E_dstE.ToString("X");
-            VE_dstM = E_dstM.ToString("X");
-            VE_srcA = E_srcA.ToString("X");
-            VE_srcB = E_srcB.ToString("X");
-            VM_stat = M_stat.ToString("X");
+            VD_rA = D_rA.ToString();
+            VD_rB = D_rB.ToString();
+            VD_valC = D_valC.ToString();
+            VD_valP = D_valP.ToString();
+            VE_stat = E_stat.ToString();
+            VE_ifun = E_ifun.ToString();
+            VE_valC = E_valC.ToString();
+            VE_valA = E_valA.ToString();
+            VE_valB = E_valB.ToString();
+            VE_dstE = E_dstE.ToString();
+            VE_dstM = E_dstM.ToString();
+            VE_srcA = E_srcA.ToString();
+            VE_srcB = E_srcB.ToString();
+            VM_stat = M_stat.ToString();
             VM_Cnd = M_Cnd.ToString();
-            VM_valE = M_valE.ToString("X");
-            VM_valA = M_valA.ToString("X");
-            VM_dstE = M_dstE.ToString("X");
-            VM_dstM = M_dstM.ToString("X");
-            VW_stat = W_stat.ToString("X");
-            VW_valE = W_valE.ToString("X");
-            VW_valM = W_valM.ToString("X");
-            VW_dstE = W_dstE.ToString("X");
-            VW_dstM = W_dstM.ToString("X");
+            VM_valE = M_valE.ToString();
+            VM_valA = M_valA.ToString();
+            VM_dstE = M_dstE.ToString();
+            VM_dstM = M_dstM.ToString();
+            VW_stat = W_stat.ToString();
+            VW_valE = W_valE.ToString();
+            VW_valM = W_valM.ToString();
+            VW_dstE = W_dstE.ToString();
+            VW_dstM = W_dstM.ToString();
             VrunSpeed = runSpeed.ToString();
             Vcycle_cnt = cycle_cnt.ToString();
             long eax = reg_file[0];
@@ -878,26 +884,29 @@ namespace Y86vmWpf.Model
             long esi = reg_file[6];
             long edi = reg_file[7];
 
-            Veax = eax.ToString("X");
-            Vecx = ecx.ToString("X");
-            Vedx = edx.ToString("X");
-            Vebx = ebx.ToString("X");
-            Vesp = esp.ToString("X");
-            Vebp = ebp.ToString("X");
-            Vesi = esi.ToString("X");
-            Vedi = edi.ToString("X");
+            Veax = eax.ToString();
+            Vecx = ecx.ToString();
+            Vedx = edx.ToString();
+            Vebx = ebx.ToString();
+            Vesp = esp.ToString();
+            Vebp = ebp.ToString();
+            Vesi = esi.ToString();
+            Vedi = edi.ToString();
 
+
+
+            
 
         }
 
         public void ConvertData()
         {
             //D_icode = Convert.ToInt64(VD_icode);
-           // E_icode = Convert.ToInt64(VE_icode);
+            // E_icode = Convert.ToInt64(VE_icode);
             //M_icode = Convert.ToInt64(VM_icode);
-           // W_icode = Convert.ToInt64(VW_icode);
+            // W_icode = Convert.ToInt64(VW_icode);
             //runSpeed = Convert.ToInt64(VrunSpeed);
-            /*
+            
             D_ifun = Convert.ToInt64(VD_ifun);
             D_rA = Convert.ToInt64(VD_rA);
             D_rB = Convert.ToInt64(VD_rB);
@@ -920,8 +929,8 @@ namespace Y86vmWpf.Model
             W_valM = Convert.ToInt64(VW_valM);
             W_dstE = Convert.ToInt64(VW_dstE);
             W_dstM = Convert.ToInt64(VW_dstM);
-            */
-            /*
+            
+           
             reg_file[0] = Convert.ToInt64(Veax);
             reg_file[1] = Convert.ToInt64(vecx);
             reg_file[2] = Convert.ToInt64(Vedx);
@@ -930,7 +939,35 @@ namespace Y86vmWpf.Model
             reg_file[5] = Convert.ToInt64(Vebp);
             reg_file[6] = Convert.ToInt64(Vesi);
             reg_file[7] = Convert.ToInt64(Vedi);
-            */
+            
+
+            VW_s = VM_s = VE_s = VD_s = VF_s = "normal".ToString();
+
+
+            if (W_bubble)
+                VW_s = "bubble";
+            if (W_stall)
+                VW_s = "stall";
+
+            if (M_bubble)
+                VM_s = "bubble";
+            if (M_stall)
+                VM_s = "stall";
+
+            if (E_bubble)
+                VE_s = "bubble";
+            if (E_stall)
+                VE_s = "stall";
+
+            if (D_bubble)
+                VD_s = "bubble";
+            if (D_stall)
+                VD_s = "stall";
+
+            if (F_bubble)
+                VF_s = "bubble";
+            if (F_stall)
+                VF_s = "stall";
 
         }
 
@@ -969,6 +1006,18 @@ namespace Y86vmWpf.Model
         public string Vcode { get => vcode; set { vcode = value; RaisePropertyChanged(() => Vcode); } }
         public string Vask { get => vask; set { vask = value; RaisePropertyChanged(() => Vask); } }
         public string Vans { get => vans; set { vans = value; RaisePropertyChanged(() => Vans); } }
+
+        public string VW_s { get => vW_s; set { vW_s = value; RaisePropertyChanged(() => VW_s); } }
+        public string VM_s { get => vM_s; set { vM_s = value; RaisePropertyChanged(() => VM_s); } }
+        public string VE_s { get => vE_s; set { vE_s = value; RaisePropertyChanged(() => VE_s); } }
+        public string VD_s { get => vD_s; set { vD_s = value; RaisePropertyChanged(() => VD_s); } }
+        public string VF_s { get => vF_s; set { vF_s = value; RaisePropertyChanged(() => VF_s); } }
+
+        
+        
+        
+        
+        
 
         public string Veax { get => veax; set { veax = value; RaisePropertyChanged(() => Veax); } }
         public string Vecx { get => vecx; set { vecx = value; RaisePropertyChanged(() => Vecx); } }

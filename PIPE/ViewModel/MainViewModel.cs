@@ -132,7 +132,20 @@ namespace Y86vmWpf.ViewModel
             set { openTxt = value; }
         }
 
+        private RelayCommand reset;
+
+        public RelayCommand Reset
+        {
+            get
+            {
+                if (reset == null) return new RelayCommand(() => ResetExcuteValidForm(), CanExcute);
+                return reset;
+            }
+            set { reset = value; }
+        }
+
         
+
         private void AstepExcuteValidForm()
         {
             RunAStep();
@@ -204,6 +217,11 @@ namespace Y86vmWpf.ViewModel
                 Y86.Vcode = File.ReadAllText(ofd.FileName);
                 Console.WriteLine(Y86.Vcode);
             }
+        }
+
+        public void ResetExcuteValidForm()
+        {
+            Y86.InitAll();
         }
 
         private bool running = true; 
