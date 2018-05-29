@@ -6,6 +6,7 @@
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator},Path=Main}"
         Title="MainWindow" Height="720.157" Width="1050.581">
+    <Viewbox>
     <Grid>
         <Grid Margin="0,0,528,-0.2">
             <Grid.Background>
@@ -90,6 +91,7 @@
         <!--<TextBox HorizontalAlignment="Left" Height="25" Margin="859,133,-415,0" TextWrapping="Wrap" Text="{Binding Y86.VrunSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="72"/>
         -->
     </Grid>
+    </Viewbox>
 </Window>
 <!--
 eax

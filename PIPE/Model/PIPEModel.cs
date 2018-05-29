@@ -114,7 +114,7 @@ namespace Y86vmWpf.Model
         {
             tools = new ITools();
             Init_PIPEModel();
-            ReadFromFile();
+            ReadFromText();
         }
 
         //初始化模型数值
