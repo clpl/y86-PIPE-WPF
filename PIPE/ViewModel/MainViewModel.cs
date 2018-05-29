@@ -144,7 +144,41 @@ namespace Y86vmWpf.ViewModel
             set { reset = value; }
         }
 
-        
+        private RelayCommand addSpeed;
+
+        public RelayCommand AddSpeed
+        {
+            get
+            {
+                if (addSpeed == null) return new RelayCommand(() => AddSpeedExcuteValidForm(), CanExcute);
+                return addSpeed;
+            }
+            set { addSpeed = value; }
+        }
+
+        private RelayCommand subSpeed;
+
+        public RelayCommand SubSpeed
+        {
+            get
+            {
+                if (subSpeed == null) return new RelayCommand(() => SubSpeedExcuteValidForm(), CanExcute);
+                return subSpeed;
+            }
+            set { subSpeed = value; }
+        }
+
+        public void AddSpeedExcuteValidForm()
+        {
+            Y86.RunSpeed-=20;
+            if (Y86.RunSpeed <= 10)
+                Y86.RunSpeed += 10;
+        }
+
+        public void SubSpeedExcuteValidForm()
+        {
+            Y86.RunSpeed+=20;
+        }
 
         private void AstepExcuteValidForm()
         {
@@ -228,11 +262,8 @@ namespace Y86vmWpf.ViewModel
 
         public void RunRunRun()
         {
-            //Y86.test();
-            Assembler asm = new Assembler();
-            string s = asm.assemble("jne 487");
-            Console.WriteLine(s);
-            
+  
+            //¿ªÆôÏß³Ì
             Task.Factory.StartNew(() =>
             {
                 running = true;

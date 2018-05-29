@@ -73,18 +73,20 @@
 
         </Grid>
         <Label FontSize="15px" Content="Cycle:" HorizontalAlignment="Left" Margin="508,27,0,0" VerticalAlignment="Top" Height="29" Width="54"/>
-        <Button Content="start" Command="{Binding Changebb}" Margin="858,23,115,639.4" />
+        <Button Content="Start" Command="{Binding Changebb}" Margin="858,23,115,639.4" />
 
 
-        <Button Content="stop" Command="{Binding Pause}" Margin="858,56,115,606.4" />
-        <Button Content="step" Command="{Binding Astep}" Margin="858,89,115,573.4" />
+        <Button Content="Pause" Command="{Binding Pause}" Margin="858,56,115,606.4" />
+        <Button Content="Astep" Command="{Binding Astep}" Margin="858,89,115,573.4" />
         <TextBox  HorizontalAlignment="Left" Height="36" Margin="468,81,0,0" TextWrapping="Wrap" Text="{Binding Y86.VW_s, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="48"/>
         <TextBox  HorizontalAlignment="Left" Height="36" Margin="468,214,0,0" TextWrapping="Wrap" Text="{Binding Y86.VM_s,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="48"/>
         <TextBox  HorizontalAlignment="Left" Height="36" Margin="468,343,0,0" TextWrapping="Wrap" Text="{Binding Y86.VE_s, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="48"/>
         <TextBox  HorizontalAlignment="Left" Height="36" Margin="468,499,0,0" TextWrapping="Wrap" Text="{Binding Y86.VD_s, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="48"/>
         <TextBox  HorizontalAlignment="Left" Height="36" Margin="468,638,0,0" TextWrapping="Wrap" Text="{Binding Y86.VF_s, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="48"/>
-        <Button Content="reset" Command="{Binding Reset}" Margin="940,23,33,639.4" />
+        <Button Content="Reset" Command="{Binding Reset}" Margin="940,23,33,639.4" />
         <TextBox  FontSize="30px" BorderBrush="Transparent" HorizontalAlignment="Left" Height="49" Margin="562,20,0,0" TextWrapping="Wrap" Text="{Binding Y86.Vcycle_cnt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="63"/>
+        <Button Content="AddSpeed" Command="{Binding AddSpeed}" Margin="940,56,33,606.4" />
+        <Button Content="SubSpeed" Command="{Binding SubSpeed}" Margin="940,89,33,573.4" />
         <!--<TextBox HorizontalAlignment="Left" Height="25" Margin="859,133,-415,0" TextWrapping="Wrap" Text="{Binding Y86.VrunSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="72"/>
         -->
     </Grid>

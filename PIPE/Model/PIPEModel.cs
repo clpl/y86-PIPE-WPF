@@ -15,11 +15,14 @@ namespace Y86vmWpf.Model
 
 
         #region DefineControlParameter
+        //启停控制
         bool isRun = false;
-        long runSpeed = 50;
+        //用此变量控制运行速度
+        long runSpeed = 200;
         #endregion
 
         #region DefineData
+        //数据冒险解决方式计数
         Int64 forward_num, stall_num, bubble_num;
         const String filepath = "bcode.bin";
         ITools tools;
@@ -36,7 +39,6 @@ namespace Y86vmWpf.Model
         Int64 F_predPC;
         Int64 f_stat, f_icode, f_ifun, f_valC, f_valP, f_pc, f_predPC;
         byte f_rA, f_rB;
-   
         //Decode
         Int64 D_stat, D_icode, D_ifun, D_rA, D_rB, D_valC, D_valP;
         Int64 d_stat, d_icode, d_ifun, d_valC, d_valA, d_valB, d_dstE, d_dstM, d_srcA, d_srcB;
@@ -54,50 +56,49 @@ namespace Y86vmWpf.Model
         Int64 w_dstE, w_valE, w_dstM, w_valM;
         Int64 Stat;
         byte imem_icode, imem_ifun;
-        //Pipeline register control signals
+        //流水线控制信号
         bool F_stall, F_bubble, D_stall, D_bubble, E_stall, E_bubble, M_stall, M_bubble, W_stall, W_bubble;
-        string Forwarding_A, Forwarding_B;
-        bool ZF, SF, OF;                        //condition code
+        //条件码
+        bool ZF, SF, OF;                        
         Int64 aluA, aluB;
         Int64 alufun;
         bool set_cc, imem_error, instr_valid;
         Int64 mem_addr;
         bool mem_read, mem_write;
-        public string writeDirectory;   //directory for writing the record documents
-        Int64 ini_stack;                          //record the allocated stack space
+       
+        
+        const byte INOP = 0;
+        const byte IHALT = 1;
+        const byte IRRMOVL = 2;
+        const byte IIRMOVL = 3;
+        const byte IRMMOVL = 4;
+        const byte IMRMOVL = 5;
+        const byte IOPL = 6;
+        const byte IJXX = 7;
+        const byte ICALL = 8;
+        const byte IRET = 9;
+        const byte IPUSHL = 0xA;
+        const byte IPOPL = 0xB;
+        const byte FNONE = 0;
+        const byte ALUADD = 0;
+        const byte SAOK = 1;
+        const byte SADR = 2;
+        const byte SINS = 3;
+        const byte SHLT = 4;
+        const byte SBUB = 5;
+        const byte SSTA = 6;
+        const byte REAX = 0;
+        const byte RECX = 1;
+        const byte REDX = 2;
+        const byte REBX = 3;
+        const byte RESP = 4;
+        const byte REBP = 5;
+        const byte RESI = 6;
+        const byte REDI = 7;
+        const byte RNONE = 0xF;
+        const byte RNOP = 0;
 
-        //HCL
-        const byte INOP = 0;//nop
-        const byte IHALT = 1;//halt
-        const byte IRRMOVL = 2;//rrmovl
-        const byte IIRMOVL = 3;//rimovl
-        const byte IRMMOVL = 4;//rmmovl
-        const byte IMRMOVL = 5;//mrmovl
-        const byte IOPL = 6;//Int64eger arthmetic
-        const byte IJXX = 7;//jump instruction
-        const byte ICALL = 8;//call
-        const byte IRET = 9;//ret
-        const byte IPUSHL = 0xA;//pushl
-        const byte IPOPL = 0xB;//popl
-        const byte FNONE = 0;//default function
-        const byte ALUADD = 0;//add
-        const byte SAOK = 1;//normal
-        const byte SADR = 2;//abnormal address 
-        const byte SINS = 3;//illegal instruction
-        const byte SHLT = 4;//halt
-        const byte SBUB = 5;//bubble
-        const byte SSTA = 6;//stalling
-        const byte REAX = 0;//%eax
-        const byte RECX = 1;//%ecx
-        const byte REDX = 2;//%edx
-        const byte REBX = 3;//%ebx
-        const byte RESP = 4;//%esp
-        const byte REBP = 5;//%ebp
-        const byte RESI = 6;//%esi
-        const byte REDI = 7;//%edi
-        const byte RNONE = 0xF;//no register
-        const byte RNOP = 0;//value when register in bubble
-
+        //与界面ui的通信
         public long RunSpeed { get => runSpeed; set => runSpeed = value; }
         public bool IsRun { get => isRun; set => isRun = value; }
         #endregion
@@ -108,6 +109,7 @@ namespace Y86vmWpf.Model
             
         }
 
+        //模拟器初始化
         public void InitAll()
         {
             tools = new ITools();
@@ -115,6 +117,7 @@ namespace Y86vmWpf.Model
             ReadFromFile();
         }
 
+        //初始化模型数值
         void Init_PIPEModel()
         {
             cycle_cnt = 0;
@@ -127,6 +130,7 @@ namespace Y86vmWpf.Model
             m_icode = m_valE = m_valM = 0;
             W_icode = W_valE = W_valM = 0;
             aluA = aluB = alufun = mem_addr = 0;
+            //无寄存器
             D_rA = D_rB = d_dstE = d_dstM = d_srcA = d_srcB = RNONE;
             E_dstE = E_dstM = E_srcA = E_srcB = e_dstE = e_dstM = RNONE;
             M_dstE = M_dstM = m_dstE = m_dstM = RNONE;
@@ -137,17 +141,18 @@ namespace Y86vmWpf.Model
             f_rA = f_rB = REAX;
             imem_error = instr_valid = dmem_error = ZF = SF = OF = e_Cnd = M_Cnd = set_cc = mem_read = mem_write = false;
             F_stall = F_bubble = D_stall = D_bubble = E_stall = E_bubble = M_bubble = M_stall = W_bubble = W_stall = false;
-            Forwarding_A = Forwarding_B = "N";
             mem = new MemArr();
             reg_file = new Int64[9];
             Array.Clear(reg_file, 0, reg_file.Length);
+            //栈指针初始化
             reg_file[4] = 300;
             Vesp = vesp = "300";
             bubble_num = stall_num = forward_num = 0;
 
-            MessageBox.Show("yes");
+            
         }
 
+        //从二进制文件中读取代码
         void ReadFromFile()
         {
             FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
@@ -161,6 +166,7 @@ namespace Y86vmWpf.Model
             br.Close();
         }
 
+        //从输入框中读取代码
         public void ReadFromText()
         {
             //jmp 487512
@@ -170,6 +176,7 @@ namespace Y86vmWpf.Model
             {
                 int temp = 0;
                 int precode, aftcode;
+                //做十六进制处理
                 if (char.IsDigit(code[i]))
                     precode = Convert.ToInt32(code[i] - '0');
                 else if(char.IsUpper(code[i]))
@@ -185,17 +192,10 @@ namespace Y86vmWpf.Model
                 temp = temp | (precode << 4);
                 temp = temp | aftcode;
                 mem.Write(i / 2, (byte)temp);
-                /*
-                 * while(!char.IsDigit(code[i]))
-                {
-                    i++;
-                }
-                */
+                //加一个字节
                 i += 2;
                 Console.WriteLine(temp);
             }
-            string s;
-            s = "wee";
         }
         #endregion
 
@@ -203,7 +203,7 @@ namespace Y86vmWpf.Model
         void Fetch()
         {
 
-            //Select f_pc from the source
+            //选择PC值
             if (M_icode == IJXX && !M_Cnd)
                 f_pc = M_valA;
             else if (W_icode == IRET)
@@ -211,7 +211,7 @@ namespace Y86vmWpf.Model
             else
                 f_pc = F_predPC;
 
-            //Fetch the instruction
+            //得到指令
             byte imem = mem.Read(f_pc);
             byte[] temp = new byte[2];
             temp = tools.ByteSplit(imem);
@@ -220,9 +220,11 @@ namespace Y86vmWpf.Model
 
             bool instr_valid, imem_error, need_regids,need_valC;
 
+            //异常处理
             if(imem_icode > MAX_ICODE)
             {
                 imem_error = true;
+                MessageBox.Show("操作码错误");
             }
             else
             {
@@ -231,37 +233,45 @@ namespace Y86vmWpf.Model
 
             if( (f_pc < MAX_MEM && f_pc >=0) )
             {
+                
                 instr_valid = true;
                 f_icode = imem_icode;
                 f_ifun = imem_ifun;
             }
             else
             {
+                MessageBox.Show("内存访问越界");
                 instr_valid = false;
                 f_icode = INOP;
                 f_ifun = FNONE;
             }
 
             if (imem_error)
+            {
                 f_stat = SADR;
+                MessageBox.Show("内存访问越界");
+            }
             else if (!instr_valid)
+            {
                 f_stat = SINS;
+                MessageBox.Show("指令无效");
+            }
             else if (f_icode == IHALT)
                 f_stat = SHLT;
             else
                 f_stat = SAOK;
 
-            //Is instruction valid?
+            //异常处理，指令是否有效
             if (f_icode == INOP || f_icode == IHALT || f_icode == IRRMOVL || f_icode == IIRMOVL || f_icode == IRMMOVL || f_icode == IMRMOVL || f_icode == IOPL || f_icode == IJXX || f_icode == ICALL || f_icode == IRET || f_icode == IPUSHL || f_icode == IPOPL)
                 instr_valid = true;
             else
                 instr_valid = false;
-            //Does fetched instruction require a regid byte?
+            //此指令是否需要寄存器
             if (f_icode == IRRMOVL || f_icode == IOPL || f_icode == IPUSHL || f_icode == IPOPL || f_icode == IIRMOVL || f_icode == IRMMOVL || f_icode == IMRMOVL)
                 need_regids = true;
             else
                 need_regids = false;
-            //Does fetched instruction require a constant word?
+            //指令是否需要立即数
             if (f_icode == IIRMOVL || f_icode == IRMMOVL || f_icode == IMRMOVL || f_icode == IJXX || f_icode == ICALL)
                 need_valC = true;
             else
@@ -269,11 +279,10 @@ namespace Y86vmWpf.Model
 
             if (W_stat != SHLT)
                 f_pc += 1;
-            else
-                f_pc = f_pc;
 
             f_valC = 0;
 
+            //读寄存器
             if (need_regids)
             {
                 temp = tools.ByteSplit(mem.Read(f_pc));
@@ -284,6 +293,8 @@ namespace Y86vmWpf.Model
             {
                 f_rB = f_rA = RNONE;
             }
+
+            //读立即数
             if (need_valC)
             {
                 byte[] temp8 = new byte[8];
@@ -300,7 +311,7 @@ namespace Y86vmWpf.Model
 
             f_valP = f_pc;
 
-            //Predict next value of PC
+            //预测PC值
             if (f_icode == IJXX || f_icode == ICALL)
                 f_predPC = f_valC;
             else
@@ -316,7 +327,7 @@ namespace Y86vmWpf.Model
             d_icode = D_icode;
             d_ifun = D_ifun;
             d_valC = D_valC;
-            //select d_srcA                  
+            //选择源A                
             switch(D_icode)
             {
                 case IRRMOVL:
@@ -333,7 +344,7 @@ namespace Y86vmWpf.Model
                     d_srcA = RNONE;
                     break;
             }
-            //select d_srcB
+            //选择源B
             switch (D_icode)
             {
                 case IMRMOVL:
@@ -351,7 +362,7 @@ namespace Y86vmWpf.Model
                     d_srcB = RNONE;
                     break;
             }
-            //select d_srcE
+            //选择源E
             switch (D_icode)
             {
                 case IRRMOVL:
@@ -370,20 +381,20 @@ namespace Y86vmWpf.Model
                     break;
             }
 
-            
+            //选择源M，取决于是否是间接寻址
             if (D_icode == IMRMOVL || D_icode == IPOPL)
                 d_dstM = D_rA;
             else
                 d_dstM = RNONE;
 
 
-            forward_num++;
+            
 
-
+            //检测是否需要数据转发
             if (D_icode == ICALL)
             {
                 d_valA = D_valP;
-                Forwarding_A = "NULL";
+               
             }
             else if(D_icode == IJXX)
             {
@@ -392,68 +403,56 @@ namespace Y86vmWpf.Model
             else if (d_srcA == e_dstE)
             {
                 d_valA = e_valE;
-                Forwarding_A = "e_valE:0x" + e_valE.ToString("x8");
+               
             }
             else if (d_srcA == M_dstM)
             {
                 d_valA = m_valM;
-                Forwarding_A = "m_valM:0x" + m_valM.ToString("x8");
             }
             else if (d_srcA == M_dstE)
             {
                 d_valA = M_valE;
-                Forwarding_A = "M_valE:0x" + M_valE.ToString("x8");
             }
             else if (d_srcA == W_dstM)
             {
                 d_valA = W_valM;
-                Forwarding_A = "W_valM:0x" + W_valM.ToString("x8");
             }
             else if (d_srcA == W_dstE)
             {
                 d_valA = W_valE;
-                Forwarding_A = "W_valE:0x" + W_valE.ToString("x8");
             }
             else
             {
                 forward_num--;
                 d_valA = reg_file[d_srcA];
-                Forwarding_A = "NULL";
             }
 
             forward_num++;
-            //Fwd B module
+            //检测是否需要数据转发
             if (d_srcB == e_dstE)
             {
                 d_valB = e_valE;
-                Forwarding_B = "e_valE:0x" + e_valE.ToString("x8");
             }
             else if (d_srcB == M_dstM)
             {
                 d_valB = m_valM;
-                Forwarding_B = "m_valM:0x" + m_valM.ToString("x8");
             }
             else if (d_srcB == M_dstE)
             {
                 d_valB = M_valE;
-                Forwarding_B = "M_valE:0x" + M_valE.ToString("x8");
             }
             else if (d_srcB == W_dstM)
             {
                 d_valB = W_valM;
-                Forwarding_B = "W_valM:0x" + W_valM.ToString("x8");
             }
             else if (d_srcB == W_dstE)
             {
                 d_valB = W_valE;
-                Forwarding_B = "W_valE:0x" + W_valE.ToString("x8");
             }
             else
             {
                 forward_num--;
-                d_valB = reg_file[d_srcB];
-                Forwarding_B = "NULL";
-            }
+                d_valB = reg_file[d_srcB];            }
         }
         #endregion
 
@@ -463,7 +462,7 @@ namespace Y86vmWpf.Model
             e_stat = E_stat;
             e_icode = E_icode;
 
-            //Select aluA
+            //选择运算数A
             switch (E_icode)
             {
                 case IRRMOVL:
@@ -487,7 +486,7 @@ namespace Y86vmWpf.Model
                     aluA = 0;
                     break;
             }
-            //Select aluB
+            //选择运算数B
             switch (E_icode)
             {
                 case IRMMOVL:
@@ -508,7 +507,7 @@ namespace Y86vmWpf.Model
                 alufun = E_ifun;
             else
                 alufun = ALUADD;
-            //ALU module
+            //ALU进行运算
             switch (alufun)
             {
                 case 0: e_valE = aluB + aluA; break;
@@ -517,20 +516,20 @@ namespace Y86vmWpf.Model
                 case 3: e_valE = aluB ^ aluA; break;
                 default: e_valE = 0; break;
             }
-            //Should the condition codes be updated?
-            //State changes only during normal operation
+
+            //是否需要条件码
             if (E_icode == IOPL && m_stat != SADR && m_stat != SINS && m_stat != SHLT && W_stat != SADR && W_stat != SINS && W_stat != SHLT)
                 set_cc = true;
             else
                 set_cc = false;
-            //Generate valA in execute stage
+            //产生下一个状态的valA
             e_valA = E_valA;
-            //Set dstE to RNONE in event of not-taken conditional move
+            //若不是条件移动，dstE置为0
             if (E_icode == IRRMOVL && !e_Cnd)
                 e_dstE = RNONE;
             else
                 e_dstE = E_dstE;
-            //cc
+            //设置条件码
             if (set_cc)
             {
                 if (e_valE < 0)
@@ -546,22 +545,23 @@ namespace Y86vmWpf.Model
                 else
                     OF = false;
             }
-            //e_Cnd module            
+            //根据指令决定是否符合条件           
             if (E_icode == IJXX || E_icode == IRRMOVL)
             {
                 switch (E_ifun)
                 {
-                    case 0: e_Cnd = true; break;//jmp or rrmovl
-                    case 1: if (ZF || SF) e_Cnd = true; else e_Cnd = false; break;//jle or cmovle
-                    case 2: if (SF) e_Cnd = true; else e_Cnd = false; break;//jl or cmovl
-                    case 3: if (ZF) e_Cnd = true; else e_Cnd = false; break;//je or comve
-                    case 4: if (!ZF) e_Cnd = true; else e_Cnd = false; break;//jne or cmovne
-                    case 5: if (!SF) e_Cnd = true; else e_Cnd = false; break;//jge or comvge
-                    case 6: if (!ZF && !SF) e_Cnd = true; else e_Cnd = false; break;//jg or comvg
+                    case 0: e_Cnd = true; break;//jmp rrmovl
+                    case 1: if (ZF || SF) e_Cnd = true; else e_Cnd = false; break;//jle cmovle
+                    case 2: if (SF) e_Cnd = true; else e_Cnd = false; break;//jl cmovl
+                    case 3: if (ZF) e_Cnd = true; else e_Cnd = false; break;//je comve
+                    case 4: if (!ZF) e_Cnd = true; else e_Cnd = false; break;//jne cmovne
+                    case 5: if (!SF) e_Cnd = true; else e_Cnd = false; break;//jge comvge
+                    case 6: if (!ZF && !SF) e_Cnd = true; else e_Cnd = false; break;//jg comvg
                 }
             }
             else
                 e_Cnd = false;
+            //传递数值
             e_dstM = E_dstM;
         }
         #endregion
@@ -573,7 +573,7 @@ namespace Y86vmWpf.Model
             m_valE = M_valE;
             m_dstE = M_dstE;
             m_dstM = M_dstM;
-            //Select memory address
+            //选择访存的地址
             switch (M_icode)
             {
                 case IRMMOVL:
@@ -590,22 +590,23 @@ namespace Y86vmWpf.Model
                     break;
             }
            
-                                  //Set read control signal
+            //是否需要读                    
             if (M_icode == IMRMOVL || M_icode == IPOPL || M_icode == IRET)
                 mem_read = true;
             else
                 mem_read = false;
-            //Set write control signal
+            //是否需要写
             if (M_icode == IRMMOVL || M_icode == IPUSHL || M_icode == ICALL)
                 mem_write = true;
             else
                 mem_write = false;
-            //read / write memory
+            //异常检查
             if (mem_addr > MAX_MEM)
                 dmem_error = true;
             else
             {
                 dmem_error = false;
+                //读一个数
                 if (mem_read)
                 {
                     m_valM = 0;
@@ -616,13 +617,15 @@ namespace Y86vmWpf.Model
                 }
                 else
                     m_valM = 0;
+
+                //写一个数
                 if (mem_write)
                 {
                     for (int i = 0; i < 4; i++)                       
                         mem.Write(mem_addr - i, (byte)((M_valA >> (8 * i)) & 0xff));
                 }
             }
-            //Update the status
+            //异常表示
             if (dmem_error)
                 m_stat = SADR;
             else
@@ -634,20 +637,22 @@ namespace Y86vmWpf.Model
         #region Write back
         void Write_back()
         {
-            //Set E port register ID
+            //使dstE为寄存器id
             w_dstE = W_dstE;
-            //## Set E port value
+            //设置E的值
             w_valE = W_valE;
-            //Set M port register ID
+            //同E
             w_dstM = W_dstM;
-            //Set M port value
+            //同M
             w_valM = W_valM;
-            //Update processor status
+            //气泡状态的处理
             if (W_stat == SBUB)
                 Stat = SAOK;
             else
                 Stat = W_stat;
-            if (Stat == SAOK)//only if stat is AOK can we update register file
+
+            //正常情况下，更新寄存器
+            if (Stat == SAOK)
             {
                 if (W_dstE != RNONE)
                     reg_file[W_dstE] = W_valE;
@@ -658,6 +663,7 @@ namespace Y86vmWpf.Model
         #endregion
 
         #region GeneratedControlSignal
+        //产生控制信号
         void GeneratedStateControlSignal()
         {
             F_bubble = false;
@@ -705,13 +711,15 @@ namespace Y86vmWpf.Model
         #region GeneratedNextPipeStateByControlSignal
         void GeneratedNextPipeStateByControlSignal()
         {
+            //若F正常
             if(!F_stall)
             {
                 F_predPC = f_predPC;
             }
-            
+            //若D正常
             if(!D_stall)
             {
+                //传正常值
                 D_stat = f_stat;
                 D_icode = f_icode;
                 D_ifun = f_ifun;
@@ -720,15 +728,17 @@ namespace Y86vmWpf.Model
                 D_valC = f_valC;
                 D_valP = f_valP;
             }
+            //若D需要置入气泡
             if(D_bubble)
             {
+                //传入空值，对接下来的状态没有任何作用
                 D_stat = SBUB;
                 D_icode = INOP;
                 D_ifun = FNONE;
                 D_rA = RNONE;
                 D_rB = RNONE;
-                D_valC = 0;
-                D_valP = 0;
+                D_valC = RNOP;
+                D_valP = RNOP;
             }
 
             if (E_bubble)
@@ -787,24 +797,36 @@ namespace Y86vmWpf.Model
         #region GenerateNormalState
         void GenerateNormalState()
         {
+            //写回
             Write_back();
+            //访存
             Memory();
+            //执行
             Execute();
+            //解码
             Decode();
+            //取指令
             Fetch();    
         }
         #endregion
 
         public void Run()
         {
+            //周期数加一
             cycle_cnt++;
+            //将显示区更改的数据写入内存区
             ConvertData();
+            //产生流水线寄存器数值
             GenerateNormalState();
+            //根据数据冒险条件产生控制信号（气泡，暂停）
             GeneratedStateControlSignal();
+            //根据控制信号产生传递各寄存器的数值
             GeneratedNextPipeStateByControlSignal();
+            //将内存区更改的数据写入显示区
             ConvertViewModel();
         }
 
+        //用于和ui通信
         #region display
         public string vD_icode;
         public string vM_icode;
@@ -861,7 +883,6 @@ namespace Y86vmWpf.Model
         {
             VD_icode = D_icode.ToString("X");
             VE_icode = E_icode.ToString("X");
-            //Console.WriteLine(D_icode);
             VM_icode = M_icode.ToString("X");
             VW_icode = W_icode.ToString("X");
             VD_stat = D_stat.ToString("X");
@@ -1049,26 +1070,10 @@ namespace Y86vmWpf.Model
         public string Vcycle_cnt { get => vcycle_cnt; set { vcycle_cnt = value; RaisePropertyChanged(() => Vcycle_cnt); } }
         
 
-        public void test()
-        {
-            icode = "5487";
-        }
-
-        public string Icode
-        {
-            get => icode; set
-            {
-                icode = value;
-                RaisePropertyChanged(() => Icode);
-            }
-        }
-
         public void GetMemData()
         {
             Vans = mem.ReadADoubleWord(Convert.ToInt64(Vask)).ToString("X");
         }
-
-        string icode = "i";
         #endregion
     }
 
@@ -1139,8 +1144,10 @@ namespace Y86vmWpf.Model
     }
     #endregion
 
+    //工具类
     public class ITools
     {
+        //一字节拆分为两个半字节数字
         public byte[] ByteSplit(Byte num)
         {
             byte[] res = new byte[2];

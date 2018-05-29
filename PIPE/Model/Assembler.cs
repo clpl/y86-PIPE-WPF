@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PIPE.Model
 {
@@ -17,7 +18,7 @@ namespace PIPE.Model
         string[] cmp = { "le", "l", "e", "ne", "ge", "g" };
 
 
-
+        //汇编器各部分
         public Assembler()
         {
             four_bits = new string[12];
@@ -26,7 +27,7 @@ namespace PIPE.Model
             disass = new char[12];
         }
 
-        //split Y86 instruction and data
+        //选择操作吗
         void split_instr_data(string s)
         {
             string[] a = new string[2];
@@ -71,9 +72,10 @@ namespace PIPE.Model
                 four_bits[0] = "a";
             else if (a[0] == "popl")
                 four_bits[0] = "b";
+            else MessageBox.Show("指令无法识别");
         }
 
-        //get ifun value from the instrution
+        //对于j，comv选择操作码的解释
         string get_ifun(string instr)
         {
             if (instr == "jmp" || instr == "rrmovl") return "0";
@@ -86,7 +88,7 @@ namespace PIPE.Model
             else return "";
         }
 
-        //assemble the ifun
+        //选择操作码的解释
         void assemble_rest1()
         {
             switch (Convert.ToInt32(four_bits[0], 16))
@@ -117,7 +119,7 @@ namespace PIPE.Model
             }
         }
 
-        //translate the register file name into corresponding number
+        //给寄存器编号
         string trans_reg_file_addr(string reg)
         {
             if (reg == "%eax") return "0";
@@ -131,7 +133,7 @@ namespace PIPE.Model
             else return "";
         }
 
-        //get corresponding register file number for instructions like "rrmovl","irmovl",etc. 
+        //区分直接寻址，简介寻址
         void get_reg_file(string data)
         {
             int idx = data.IndexOf(',');
@@ -154,7 +156,7 @@ namespace PIPE.Model
             four_bits[3] = trans_reg_file_addr(rb);
         }
 
-        //assemble the rA and rB
+        //汇编寄存器号
         void assemble_rest2_3()
         {
             switch (Convert.ToInt32(four_bits[0], 16))
@@ -183,7 +185,7 @@ namespace PIPE.Model
             }
         }
 
-        //get constant value for V and D
+        //读立即数
         void get_constant_val(string val, ref string[] bits)
         {
             int temp = Convert.ToInt32(val);
@@ -195,7 +197,7 @@ namespace PIPE.Model
             }
         }
 
-        //get memory address value for Dest
+        //读访存的地址
         void get_mem_addr(string addr, ref string[] bits)
         {
             addr = addr.Substring(2);
@@ -208,7 +210,7 @@ namespace PIPE.Model
             }
         }
 
-        //assemble the V or D or Dest
+        //区分是访存地址，还是立即数
         void assemble_rest_all()
         {
             switch (Convert.ToInt32(four_bits[0], 16))
@@ -235,7 +237,7 @@ namespace PIPE.Model
             }
         }
 
-        //assemble the Y86 instruction
+        //汇编主流程
         public string assemble(string code)
         {
             string result = "";
@@ -256,68 +258,6 @@ namespace PIPE.Model
             return result;
         }
 
-        //get 4 bytes value from the assembled code
-        string get_4_bytes_val(int start, bool is_hex)
-        {
-            string val = "";
-            for (int i = 0; i < 7; i += 2)
-            {
-                val += disass[start + 6 - i].ToString();
-                val += disass[start + 7 - i].ToString();
-            }
-            int v = Convert.ToInt32(val, 16);
-            return is_hex ? ("0x" + val) : v.ToString();
-        }
 
-        //disassemble the Y86 instruction
-        public string disassemble(string code)
-        {
-            string result;
-            disass = code.ToCharArray();
-            switch (Convert.ToInt32(disass[0].ToString(), 16))
-            {
-                case 0:
-                    return "nop";
-                case 1:
-                    return "halt";
-                case 9:
-                    return "ret";
-                case 3:
-                    result = "irmovl " + get_4_bytes_val(4, false) + ", " + reg[Convert.ToInt32(disass[3] - '0')];
-                    return result;
-                case 4:
-                    result = "rmmovl " + reg[Convert.ToInt32(disass[2] - '0')] + ", " + get_4_bytes_val(4, false) + "(" + reg[Convert.ToInt32(disass[3] - '0')] + ")";
-                    return result;
-                case 5:
-                    result = "mrmovl " + get_4_bytes_val(4, false) + "(" + reg[Convert.ToInt32(disass[2] - '0')] + "), " + reg[Convert.ToInt32(disass[3] - '0')];
-                    return result;
-                case 6:
-                    result = op[Convert.ToInt32(disass[1] - '0')] + " " + reg[Convert.ToInt32(disass[2] - '0')] + ", " + reg[Convert.ToInt32(disass[3] - '0')];
-                    return result;
-                case 7:
-                    if (disass[1] == '0')
-                        result = "jmp " + get_4_bytes_val(2, true);
-                    else
-                        result = "j" + cmp[Convert.ToInt32(disass[1] - '0')] + " " + get_4_bytes_val(2, true);
-                    return result;
-                case 2:
-                    if (disass[1] == '0')
-                        result = "rrmovl " + reg[Convert.ToInt32(disass[2] - '0')] + ", " + reg[Convert.ToInt32(disass[3] - '0')];
-                    else
-                        result = "cmov" + cmp[Convert.ToInt32(disass[1] - '0')] + " " + reg[Convert.ToInt32(disass[2] - '0')] + ", " + reg[Convert.ToInt32(disass[3] - '0')];
-                    return result;
-                case 8:
-                    result = "call " + get_4_bytes_val(2, true);
-                    return result;
-                case 10:
-                    result = "pushl " + reg[Convert.ToInt32(disass[2] - '0')];
-                    return result;
-                case 11:
-                    result = "popl " + reg[Convert.ToInt32(disass[2] - '0')];
-                    return result;
-                default:
-                    return "";
-            }
-        }
     }
 }
